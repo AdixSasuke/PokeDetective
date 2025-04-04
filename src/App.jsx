@@ -39,6 +39,15 @@ const GuessButton = memo(({ onClick }) => (
     </button>
 ));
 
+const ResetButton = memo(({ onClick }) => (
+    <button
+        onClick={onClick}
+        className="w-full max-w-md mt-3 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95"
+    >
+        New Game
+    </button>
+));
+
 const App = () => {
     const [targetPokemon, setTargetPokemon] = useState(null);
     const [guess, setGuess] = useState("");
@@ -49,18 +58,26 @@ const App = () => {
 
     useEffect(() => {
         const fetchTarget = async () => {
-            const id = Math.floor(Math.random() * 1010) + 1;
-            const pokemon = await fetchPokemonData(id);
-            console.log(pokemon);
-            setTargetPokemon(pokemon);
+            try {
+                const id = Math.floor(Math.random() * 1010) + 1;
+                const pokemon = await fetchPokemonData(id);
+                console.log(pokemon);
+                setTargetPokemon(pokemon);
+            } catch (error) {
+                console.error("Error fetching target Pokemon:", error);
+            }
         };
 
         const fetchAllPokemonNames = async () => {
-            const res = await axios.get(
-                "https://pokeapi.co/api/v2/pokemon?limit=1010"
-            );
-            const names = res.data.results.map((p) => p.name);
-            setAllPokemon(names);
+            try {
+                const res = await axios.get(
+                    "https://pokeapi.co/api/v2/pokemon?limit=1010"
+                );
+                const names = res.data.results.map((p) => p.name);
+                setAllPokemon(names);
+            } catch (error) {
+                console.error("Error fetching Pokemon names:", error);
+            }
         };
 
         fetchTarget();
@@ -85,6 +102,20 @@ const App = () => {
         setGuess("");
         setFilteredPokemon([]);
     };
+
+    const handleReset = useCallback(async () => {
+        try {
+            const id = Math.floor(Math.random() * 1010) + 1;
+            const pokemon = await fetchPokemonData(id);
+            setTargetPokemon(pokemon);
+            setGuess("");
+            setGuesses([]);
+            setWin(false);
+            setFilteredPokemon([]);
+        } catch (error) {
+            console.error("Error resetting game:", error);
+        }
+    }, []);
 
     const handleInputChange = useCallback(
         (e) => {
@@ -162,10 +193,13 @@ const App = () => {
                     </div>
 
                     {win && (
-                        <div className="mt-6 text-2xl font-bold text-green-600 animate-bounce">
-                            🎉 Congratulations! You found{" "}
-                            {targetPokemon.name.toUpperCase()}! 🎉
-                        </div>
+                        <>
+                            <div className="mt-6 text-2xl font-bold text-green-600 animate-bounce">
+                                🎉 Congratulations! You found{" "}
+                                {targetPokemon.name.toUpperCase()}! 🎉
+                            </div>
+                            <ResetButton onClick={handleReset} />
+                        </>
                     )}
                 </div>
             </div>
