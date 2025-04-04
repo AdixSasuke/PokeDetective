@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, memo } from "react";
 import fetchPokemonData from "./components/fetchRandomPokemon";
 import axios from "axios";
 
-const attributes = ["name", "generation", "type1", "type2", "color", "habitat"];
+const attributes = ["name", "generation", "type1", "type2", "color"];
 
 // Memoized components for better performance
 const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => (
@@ -155,22 +155,17 @@ const App = () => {
                     <GuessButton onClick={handleGuess} />
 
                     <div className="w-full bg-white rounded-xl shadow-lg p-3 sm:p-6 mt-4 sm:mt-8 overflow-x-auto">
-                        <div className="grid grid-cols-6 gap-2 sm:gap-3 min-w-[600px]">
-                            {[
-                                "Name",
-                                "Gen",
-                                "Type 1",
-                                "Type 2",
-                                "Color",
-                                "Habitat",
-                            ].map((h, i) => (
-                                <div
-                                    key={i}
-                                    className="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm font-medium"
-                                >
-                                    {h}
-                                </div>
-                            ))}
+                        <div className="grid grid-cols-5 gap-2 sm:gap-3 min-w-[500px]">
+                            {["Name", "Gen", "Type 1", "Type 2", "Color"].map(
+                                (h, i) => (
+                                    <div
+                                        key={i}
+                                        className="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm font-medium"
+                                    >
+                                        {h}
+                                    </div>
+                                )
+                            )}
                             {guesses.map((g, idx) =>
                                 attributes.map((attr, i) => {
                                     const correct =

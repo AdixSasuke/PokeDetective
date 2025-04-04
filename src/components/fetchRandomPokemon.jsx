@@ -28,7 +28,6 @@ const fetchPokemonData = async (nameOrId) => {
             type1: res.data.types[0]?.type.name || "unknown",
             type2: res.data.types[1]?.type.name || null,
             color: species.color.name,
-            habitat: species.habitat?.name || "unknown",
         };
     } catch (err) {
         return null;
