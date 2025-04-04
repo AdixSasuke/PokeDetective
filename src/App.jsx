@@ -6,20 +6,20 @@ const attributes = ["name", "generation", "type1", "type2", "color", "habitat"];
 
 // Memoized components for better performance
 const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => (
-    <div className="relative w-full max-w-md">
+    <div className="relative w-full max-w-md px-4 sm:px-0">
         <input
             type="text"
             value={guess}
             onChange={onChange}
-            className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
+            className="w-full p-2 sm:p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors text-sm sm:text-base"
             placeholder="Enter Pokémon name..."
         />
         {filteredPokemon.length > 0 && (
-            <ul className="absolute z-10 w-full bg-white border-2 rounded-lg shadow-lg max-h-48 overflow-y-auto mt-1">
+            <ul className="absolute z-10 w-full bg-white border-2 rounded-lg shadow-lg max-h-40 sm:max-h-48 overflow-y-auto mt-1">
                 {filteredPokemon.map((name, i) => (
                     <li
                         key={i}
-                        className="px-4 py-2 hover:bg-blue-50 cursor-pointer capitalize transition-colors"
+                        className="px-3 py-2 sm:px-4 sm:py-2 hover:bg-blue-50 cursor-pointer capitalize transition-colors text-sm sm:text-base"
                         onClick={() => onSelect(name)}
                     >
                         {name}
@@ -33,7 +33,7 @@ const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => (
 const GuessButton = memo(({ onClick }) => (
     <button
         onClick={onClick}
-        className="w-full max-w-md mt-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95"
+        className="w-full max-w-md mt-2 sm:mt-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-sm sm:text-base"
     >
         Make a Guess
     </button>
@@ -42,7 +42,7 @@ const GuessButton = memo(({ onClick }) => (
 const ResetButton = memo(({ onClick }) => (
     <button
         onClick={onClick}
-        className="w-full max-w-md mt-3 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95"
+        className="w-full max-w-md mt-2 sm:mt-3 bg-green-600 hover:bg-green-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-sm sm:text-base"
     >
         New Game
     </button>
@@ -139,13 +139,13 @@ const App = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 p-6">
+        <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 px-4 py-6 sm:p-6">
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-4xl md:text-5xl font-bold text-center mb-8 text-gray-800 drop-shadow-sm">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8 text-gray-800 drop-shadow-sm">
                     <span className="text-blue-600">Poké</span>Wordle
                 </h1>
 
-                <div className="flex flex-col items-center space-y-6">
+                <div className="flex flex-col items-center space-y-4 sm:space-y-6">
                     <GuessInput
                         guess={guess}
                         onChange={handleInputChange}
@@ -154,8 +154,8 @@ const App = () => {
                     />
                     <GuessButton onClick={handleGuess} />
 
-                    <div className="w-full bg-white rounded-xl shadow-lg p-6 mt-8">
-                        <div className="grid grid-cols-6 gap-3">
+                    <div className="w-full bg-white rounded-xl shadow-lg p-3 sm:p-6 mt-4 sm:mt-8 overflow-x-auto">
+                        <div className="grid grid-cols-6 gap-2 sm:gap-3 min-w-[600px]">
                             {[
                                 "Name",
                                 "Gen",
@@ -178,7 +178,7 @@ const App = () => {
                                     return (
                                         <div
                                             key={`${idx}-${i}`}
-                                            className={`p-2 rounded-lg font-medium text-white transition-all ${
+                                            className={`p-1 sm:p-2 rounded-lg font-medium text-white transition-all text-xs sm:text-sm text-center ${
                                                 correct
                                                     ? "bg-green-500 animate-pulse"
                                                     : "bg-red-500"
@@ -194,7 +194,7 @@ const App = () => {
 
                     {win && (
                         <>
-                            <div className="mt-6 text-2xl font-bold text-green-600 animate-bounce">
+                            <div className="mt-4 sm:mt-6 text-xl sm:text-2xl font-bold text-green-600 animate-bounce text-center px-4">
                                 🎉 Congratulations! You found{" "}
                                 {targetPokemon.name.toUpperCase()}! 🎉
                             </div>
