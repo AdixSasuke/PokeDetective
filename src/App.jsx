@@ -1,8 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import fetchPokemonData from "./components/fetchRandomPokemon";
 import axios from "axios";
 
 const attributes = ["name", "generation", "type1", "type2", "color", "habitat"];
+
+// Memoized components for better performance
+const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => (
+    <div className="relative w-full max-w-md">
+        <input
+            type="text"
+            value={guess}
+            onChange={onChange}
+            className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
+            placeholder="Enter Pokémon name..."
+        />
+        {filteredPokemon.length > 0 && (
+            <ul className="absolute z-10 w-full bg-white border-2 rounded-lg shadow-lg max-h-48 overflow-y-auto mt-1">
+                {filteredPokemon.map((name, i) => (
+                    <li
+                        key={i}
+                        className="px-4 py-2 hover:bg-blue-50 cursor-pointer capitalize transition-colors"
+                        onClick={() => onSelect(name)}
+                    >
+                        {name}
+                    </li>
+                ))}
+            </ul>
+        )}
+    </div>
+));
+
+const GuessButton = memo(({ onClick }) => (
+    <button
+        onClick={onClick}
+        className="w-full max-w-md mt-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95"
+    >
+        Make a Guess
+    </button>
+));
 
 const App = () => {
     const [targetPokemon, setTargetPokemon] = useState(null);
@@ -16,6 +51,7 @@ const App = () => {
         const fetchTarget = async () => {
             const id = Math.floor(Math.random() * 1010) + 1;
             const pokemon = await fetchPokemonData(id);
+            console.log(pokemon);
             setTargetPokemon(pokemon);
         };
 
@@ -50,88 +86,89 @@ const App = () => {
         setFilteredPokemon([]);
     };
 
-    const handleInputChange = (e) => {
-        const val = e.target.value.toLowerCase();
-        setGuess(val);
-        if (val.length === 0) {
-            setFilteredPokemon([]);
-        } else {
-            const filtered = allPokemon
-                .filter((p) => p.startsWith(val))
-                .slice(0, 10);
-            setFilteredPokemon(filtered);
-        }
-    };
+    const handleInputChange = useCallback(
+        (e) => {
+            const val = e.target.value.toLowerCase();
+            setGuess(val);
+            if (val.length === 0) {
+                setFilteredPokemon([]);
+            } else {
+                const filtered = allPokemon
+                    .filter((p) => p.startsWith(val))
+                    .slice(0, 8);
+                setFilteredPokemon(filtered);
+            }
+        },
+        [allPokemon]
+    );
 
-    const handleSelect = (name) => {
+    const handleSelect = useCallback((name) => {
         setGuess(name);
         setFilteredPokemon([]);
-    };
+    }, []);
 
     return (
-        <div className="min-h-screen bg-gray-100 p-4 flex flex-col items-center">
-            <h1 className="text-3xl font-bold mb-4">PokéWordle</h1>
+        <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 p-6">
+            <div className="max-w-4xl mx-auto">
+                <h1 className="text-4xl md:text-5xl font-bold text-center mb-8 text-gray-800 drop-shadow-sm">
+                    <span className="text-blue-600">Poké</span>Wordle
+                </h1>
 
-            <div className="relative w-80">
-                <input
-                    type="text"
-                    value={guess}
-                    onChange={handleInputChange}
-                    className="border w-full p-2 rounded-md"
-                    placeholder="Enter Pokémon name"
-                />
-                {filteredPokemon.length > 0 && (
-                    <ul className="absolute z-10 w-full bg-white border rounded-md shadow max-h-40 overflow-y-auto">
-                        {filteredPokemon.map((name, i) => (
-                            <li
-                                key={i}
-                                className="px-4 py-2 hover:bg-gray-200 cursor-pointer capitalize"
-                                onClick={() => handleSelect(name)}
-                            >
-                                {name}
-                            </li>
-                        ))}
-                    </ul>
-                )}
-                <button
-                    onClick={handleGuess}
-                    className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md w-full"
-                >
-                    Guess
-                </button>
-            </div>
+                <div className="flex flex-col items-center space-y-6">
+                    <GuessInput
+                        guess={guess}
+                        onChange={handleInputChange}
+                        onSelect={handleSelect}
+                        filteredPokemon={filteredPokemon}
+                    />
+                    <GuessButton onClick={handleGuess} />
 
-            <div className="grid grid-cols-6 gap-2 font-medium text-center text-white mt-6">
-                {["Name", "Gen", "Type 1", "Type 2", "Color", "Habitat"].map(
-                    (h, i) => (
-                        <div key={i} className="bg-black px-2 py-1 rounded">
-                            {h}
+                    <div className="w-full bg-white rounded-xl shadow-lg p-6 mt-8">
+                        <div className="grid grid-cols-6 gap-3">
+                            {[
+                                "Name",
+                                "Gen",
+                                "Type 1",
+                                "Type 2",
+                                "Color",
+                                "Habitat",
+                            ].map((h, i) => (
+                                <div
+                                    key={i}
+                                    className="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm font-medium"
+                                >
+                                    {h}
+                                </div>
+                            ))}
+                            {guesses.map((g, idx) =>
+                                attributes.map((attr, i) => {
+                                    const correct =
+                                        g[attr] === targetPokemon[attr];
+                                    return (
+                                        <div
+                                            key={`${idx}-${i}`}
+                                            className={`p-2 rounded-lg font-medium text-white transition-all ${
+                                                correct
+                                                    ? "bg-green-500 animate-pulse"
+                                                    : "bg-red-500"
+                                            }`}
+                                        >
+                                            {g[attr] || "—"}
+                                        </div>
+                                    );
+                                })
+                            )}
                         </div>
-                    )
-                )}
-                {guesses.map((g, idx) =>
-                    attributes.map((attr, i) => {
-                        const correct = g[attr] === targetPokemon[attr];
-                        return (
-                            <div
-                                key={`${idx}-${i}`}
-                                className={`p-2 rounded font-semibold ${
-                                    correct ? "bg-green-500" : "bg-red-500"
-                                }`}
-                            >
-                                {g[attr] || "—"}
-                            </div>
-                        );
-                    })
-                )}
-            </div>
+                    </div>
 
-            {win && (
-                <div className="mt-6 text-green-600 text-xl font-bold">
-                    🎉 You guessed it right! It was{" "}
-                    {targetPokemon.name.toUpperCase()}!
+                    {win && (
+                        <div className="mt-6 text-2xl font-bold text-green-600 animate-bounce">
+                            🎉 Congratulations! You found{" "}
+                            {targetPokemon.name.toUpperCase()}! 🎉
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
     );
 };
