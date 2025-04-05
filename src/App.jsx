@@ -12,11 +12,11 @@ const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => (
             type="text"
             value={guess}
             onChange={onChange}
-            className="w-full p-2 sm:p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors text-sm sm:text-base"
-            placeholder="Enter Pokémon name..."
+            className="w-full p-2 sm:p-3 rounded-lg border-2 border-red-200 focus:border-red-500 focus:outline-none transition-colors text-sm sm:text-base"
+            placeholder="Who's that Pokémon...?"
         />
         {filteredPokemon.length > 0 && (
-            <ul className="absolute z-10 w-full bg-white border-2 rounded-lg shadow-lg max-h-40 sm:max-h-48 overflow-y-auto mt-1">
+            <ul className="absolute z-10 w-full bg-white border-2 border-red-200 rounded-lg shadow-lg max-h-40 sm:max-h-48 overflow-y-auto mt-1">
                 {filteredPokemon.map((name, i) => (
                     <li
                         key={i}
@@ -34,18 +34,18 @@ const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => (
 const GuessButton = memo(({ onClick }) => (
     <button
         onClick={onClick}
-        className="w-full max-w-md mt-2 sm:mt-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-sm sm:text-base"
+        className="w-full max-w-md mt-2 sm:mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-sm sm:text-base"
     >
-        Make a Guess
+        Catch 'em!
     </button>
 ));
 
 const ResetButton = memo(({ onClick }) => (
     <button
         onClick={onClick}
-        className="w-full max-w-md mt-2 sm:mt-3 bg-green-600 hover:bg-green-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-sm sm:text-base"
+        className="w-full max-w-md mt-2 sm:mt-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-sm sm:text-base"
     >
-        New Game
+        New Battle!
     </button>
 ));
 
@@ -149,10 +149,10 @@ const App = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 px-4 py-6 sm:p-6">
+        <div className="min-h-screen bg-gradient-to-b from-red-100 to-red-200 px-4 py-6 sm:p-6">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8 text-gray-800 drop-shadow-sm">
-                    <span className="text-blue-600">Poké</span>Wordle
+                    <span className="text-red-600">Poké</span>Guess
                 </h1>
 
                 <div className="flex flex-col items-center space-y-4 sm:space-y-6">
@@ -164,7 +164,7 @@ const App = () => {
                     />
                     <GuessButton onClick={handleGuess} />
 
-                    <div className="w-full bg-white rounded-xl shadow-lg p-3 sm:p-6 mt-4 sm:mt-8 overflow-x-auto">
+                    <div className="w-full bg-white rounded-xl shadow-lg p-3 sm:p-6 mt-4 sm:mt-8 overflow-x-auto border-4 border-red-300">
                         <div className="grid grid-cols-6 gap-2 sm:gap-3 min-w-[600px]">
                             {[
                                 "Image",
@@ -176,7 +176,7 @@ const App = () => {
                             ].map((h, i) => (
                                 <div
                                     key={i}
-                                    className="flex items-center justify-center bg-gray-800 text-white px-3 py-2 rounded-lg text-sm font-medium"
+                                    className="flex items-center justify-center bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium"
                                 >
                                     {h}
                                 </div>
@@ -191,7 +191,7 @@ const App = () => {
                                                 key={`${idx}-${i}`}
                                                 className={` rounded-lg flex items-center justify-center ${
                                                     correct
-                                                        ? "bg-green-500"
+                                                        ? "bg-emerald-500"
                                                         : "bg-red-500"
                                                 }`}
                                             >
@@ -210,7 +210,7 @@ const App = () => {
                                             key={`${idx}-${i}`}
                                             className={`flex items-center justify-center p-1 sm:p-2 rounded-lg font-medium text-white transition-all text-xs sm:text-sm text-center ${
                                                 correct
-                                                    ? "bg-green-500 animate-pulse"
+                                                    ? "bg-emerald-500 animate-pulse"
                                                     : "bg-red-500"
                                             }`}
                                         >
@@ -230,9 +230,8 @@ const App = () => {
 
                     {win && (
                         <>
-                            <div className="mt-4 sm:mt-6 text-xl sm:text-2xl font-bold text-green-600 animate-bounce text-center px-4">
-                                🎉 Congratulations! You found{" "}
-                                {targetPokemon.name.toUpperCase()}! 🎉
+                            <div className="mt-4 sm:mt-6 text-xl sm:text-2xl font-bold text-red-600 animate-bounce text-center px-4">
+                                You caught {targetPokemon.name.toUpperCase()}!
                             </div>
                             <ResetButton onClick={handleReset} />
                         </>
