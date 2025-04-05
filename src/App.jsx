@@ -2,7 +2,15 @@ import React, { useEffect, useState, useCallback, memo } from "react";
 import fetchPokemonData from "./components/fetchRandomPokemon";
 import axios from "axios";
 
-const attributes = ["image", "name", "generation", "type1", "type2", "color"];
+const attributes = [
+    "image",
+    "name",
+    "generation",
+    "type1",
+    "type2",
+    "color",
+    "habitat",
+];
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "—");
 
 // Memoized components for better performance
@@ -165,7 +173,7 @@ const App = () => {
                     <GuessButton onClick={handleGuess} />
 
                     <div className="w-full bg-white rounded-xl shadow-lg p-3 sm:p-6 mt-4 sm:mt-8 overflow-x-auto border-4 border-red-300">
-                        <div className="grid grid-cols-6 gap-2 sm:gap-3 min-w-[600px]">
+                        <div className="grid grid-cols-7 gap-2 sm:gap-3 min-w-[700px]">
                             {[
                                 "Image",
                                 "Name",
@@ -173,12 +181,13 @@ const App = () => {
                                 "Type 1",
                                 "Type 2",
                                 "Color",
+                                "Habitat",
                             ].map((h, i) => (
                                 <div
                                     key={i}
-                                    className="flex items-center justify-center bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium"
+                                    className="flex items-center justify-center bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-extrabold"
                                 >
-                                    {h}
+                                    {h.toUpperCase()}
                                 </div>
                             ))}
                             {guesses.map((g, idx) =>
@@ -216,7 +225,8 @@ const App = () => {
                                         >
                                             {attr === "type1" ||
                                             attr === "type2" ||
-                                            attr === "color"
+                                            attr === "color" ||
+                                            attr === "habitat" // Add habitat to the list of attributes to capitalize
                                                 ? capitalize(g[attr])
                                                 : attr === "name"
                                                 ? capitalize(g[attr])

@@ -13,26 +13,32 @@ const generationMap = {
     "generation-ix": "IX",
 };
 
-const fetchPokemonData = async (nameOrId) => {
+const fetchPokemonData = async (idOrName) => {
     try {
-        const res = await axios.get(
-            `https://pokeapi.co/api/v2/pokemon/${nameOrId}`
+        const response = await axios.get(
+            `https://pokeapi.co/api/v2/pokemon/${idOrName}`
         );
-        const speciesRes = await axios.get(res.data.species.url);
-        const species = speciesRes.data;
+        const speciesResponse = await axios.get(response.data.species.url);
+        const species = speciesResponse.data;
+
+        const habitat = speciesResponse.data.habitat
+            ? speciesResponse.data.habitat.name
+            : "unknown";
 
         return {
-            image: res.data.sprites.front_default,
-            name: res.data.name,
+            image: response.data.sprites.front_default,
+            name: response.data.name,
             generation:
                 generationMap[species.generation.name] ||
                 species.generation.name,
-            type1: res.data.types[0]?.type.name || null,
-            type2: res.data.types[1]?.type.name || null,
+            type1: response.data.types[0]?.type.name || null,
+            type2: response.data.types[1]?.type.name || null,
             color: species.color.name,
-            sprites: res.data.sprites,
+            sprites: response.data.sprites,
+            habitat: habitat,
         };
-    } catch (err) {
+    } catch (error) {
+        console.error("Error fetching Pokemon data:", error);
         return null;
     }
 };
