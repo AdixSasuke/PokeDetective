@@ -93,6 +93,15 @@ const App = () => {
             return;
         }
 
+        // Check if Pokemon was already guessed
+        const isDuplicate = guesses.some((g) => g.name === guessed.name);
+        if (isDuplicate) {
+            alert("You've already guessed this Pokémon!");
+            setGuess("");
+            setFilteredPokemon([]);
+            return;
+        }
+
         const isCorrect = attributes.every(
             (attr) => guessed[attr] === targetPokemon[attr]
         );
