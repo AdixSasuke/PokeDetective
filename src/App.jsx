@@ -2,7 +2,8 @@ import React, { useEffect, useState, useCallback, memo } from "react";
 import fetchPokemonData from "./components/fetchRandomPokemon";
 import axios from "axios";
 
-const attributes = ["name", "generation", "type1", "type2", "color"];
+const attributes = ["image", "name", "generation", "type1", "type2", "color"];
+const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "—");
 
 // Memoized components for better performance
 const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => (
@@ -20,7 +21,7 @@ const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => (
                     <li
                         key={i}
                         className="px-3 py-2 sm:px-4 sm:py-2 hover:bg-blue-50 cursor-pointer capitalize transition-colors text-sm sm:text-base"
-                        onClick={() => onSelect(name)}
+                        onClick={() => onSelect(capitalize(name))}
                     >
                         {name}
                     </li>
@@ -154,31 +155,62 @@ const App = () => {
                     <GuessButton onClick={handleGuess} />
 
                     <div className="w-full bg-white rounded-xl shadow-lg p-3 sm:p-6 mt-4 sm:mt-8 overflow-x-auto">
-                        <div className="grid grid-cols-5 gap-2 sm:gap-3 min-w-[500px]">
-                            {["Name", "Gen", "Type 1", "Type 2", "Color"].map(
-                                (h, i) => (
-                                    <div
-                                        key={i}
-                                        className="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm font-medium"
-                                    >
-                                        {h}
-                                    </div>
-                                )
-                            )}
+                        <div className="grid grid-cols-6 gap-2 sm:gap-3 min-w-[600px]">
+                            {[
+                                "Image",
+                                "Name",
+                                "Gen",
+                                "Type 1",
+                                "Type 2",
+                                "Color",
+                            ].map((h, i) => (
+                                <div
+                                    key={i}
+                                    className="flex items-center justify-center bg-gray-800 text-white px-3 py-2 rounded-lg text-sm font-medium"
+                                >
+                                    {h}
+                                </div>
+                            ))}
                             {guesses.map((g, idx) =>
                                 attributes.map((attr, i) => {
                                     const correct =
                                         g[attr] === targetPokemon[attr];
+                                    if (attr === "image") {
+                                        return (
+                                            <div
+                                                key={`${idx}-${i}`}
+                                                className={` rounded-lg flex items-center justify-center ${
+                                                    correct
+                                                        ? "bg-green-500"
+                                                        : "bg-red-500"
+                                                }`}
+                                            >
+                                                <img
+                                                    src={
+                                                        g.sprites.front_default
+                                                    }
+                                                    alt={g.name}
+                                                    className="w-12 h-12 object-contain"
+                                                />
+                                            </div>
+                                        );
+                                    }
                                     return (
                                         <div
                                             key={`${idx}-${i}`}
-                                            className={`p-1 sm:p-2 rounded-lg font-medium text-white transition-all text-xs sm:text-sm text-center ${
+                                            className={`flex items-center justify-center p-1 sm:p-2 rounded-lg font-medium text-white transition-all text-xs sm:text-sm text-center ${
                                                 correct
                                                     ? "bg-green-500 animate-pulse"
                                                     : "bg-red-500"
                                             }`}
                                         >
-                                            {g[attr] || "—"}
+                                            {attr === "type1" ||
+                                            attr === "type2" ||
+                                            attr === "color"
+                                                ? capitalize(g[attr])
+                                                : attr === "name"
+                                                ? capitalize(g[attr])
+                                                : g[attr] || "—"}
                                         </div>
                                     );
                                 })

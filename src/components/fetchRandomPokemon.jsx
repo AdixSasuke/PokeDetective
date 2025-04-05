@@ -2,15 +2,15 @@
 import axios from "axios";
 
 const generationMap = {
-    "generation-i": 1,
-    "generation-ii": 2,
-    "generation-iii": 3,
-    "generation-iv": 4,
-    "generation-v": 5,
-    "generation-vi": 6,
-    "generation-vii": 7,
-    "generation-viii": 8,
-    "generation-ix": 9,
+    "generation-i": "I",
+    "generation-ii": "II",
+    "generation-iii": "III",
+    "generation-iv": "IV",
+    "generation-v": "V",
+    "generation-vi": "VI",
+    "generation-vii": "VII",
+    "generation-viii": "VIII",
+    "generation-ix": "IX",
 };
 
 const fetchPokemonData = async (nameOrId) => {
@@ -22,12 +22,15 @@ const fetchPokemonData = async (nameOrId) => {
         const species = speciesRes.data;
 
         return {
-            name: res.data.name,
             image: res.data.sprites.front_default,
-            generation: generationMap[species.generation.name],
-            type1: res.data.types[0]?.type.name || "unknown",
+            name: res.data.name,
+            generation:
+                generationMap[species.generation.name] ||
+                species.generation.name,
+            type1: res.data.types[0]?.type.name || null,
             type2: res.data.types[1]?.type.name || null,
             color: species.color.name,
+            sprites: res.data.sprites,
         };
     } catch (err) {
         return null;
