@@ -62,6 +62,7 @@ const App = () => {
             try {
                 const id = Math.floor(Math.random() * 1010) + 1;
                 const pokemon = await fetchPokemonData(id);
+                console.log(pokemon);
                 setTargetPokemon(pokemon);
             } catch (error) {
                 console.error("Error fetching target Pokemon:", error);
