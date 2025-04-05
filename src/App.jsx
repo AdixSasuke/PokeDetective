@@ -13,31 +13,80 @@ const attributes = [
 ];
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "—");
 
+const getPokemonId = (name) => {
+    // Create a map of special cases if needed
+    const specialCases = {
+        "nidoran-f": 29,
+        "nidoran-m": 32,
+        // Add more special cases as needed
+    };
+
+    if (specialCases[name]) return specialCases[name];
+
+    // For regular Pokemon, fetch their ID from your existing data
+    const url = `https://pokeapi.co/api/v2/pokemon/${name}`;
+    return fetch(url)
+        .then((res) => res.json())
+        .then((data) => data.id)
+        .catch(() => null);
+};
+
 // Memoized components for better performance
-const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => (
-    <div className="relative w-full max-w-md px-4 sm:px-0">
-        <input
-            type="text"
-            value={guess}
-            onChange={onChange}
-            className="w-full p-2 sm:p-3 rounded-lg border-2 border-red-200 focus:border-red-500 focus:outline-none transition-colors text-sm sm:text-base"
-            placeholder="Who's that Pokémon...?"
-        />
-        {filteredPokemon.length > 0 && (
-            <ul className="absolute z-10 w-full bg-white border-2 border-red-200 rounded-lg shadow-lg max-h-40 sm:max-h-48 overflow-y-auto mt-1">
-                {filteredPokemon.map((name, i) => (
-                    <li
-                        key={i}
-                        className="px-3 py-2 sm:px-4 sm:py-2 hover:bg-blue-50 cursor-pointer capitalize transition-colors text-sm sm:text-base"
-                        onClick={() => onSelect(capitalize(name))}
-                    >
-                        {name}
-                    </li>
-                ))}
-            </ul>
-        )}
-    </div>
-));
+const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => {
+    const [pokemonImages, setPokemonImages] = useState({});
+
+    useEffect(() => {
+        // Fetch Pokemon IDs for all filtered Pokemon
+        const fetchPokemonIds = async () => {
+            const newImages = {};
+            for (const name of filteredPokemon) {
+                const id = await getPokemonId(name);
+                if (id) {
+                    newImages[
+                        name
+                    ] = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+                }
+            }
+            setPokemonImages(newImages);
+        };
+
+        if (filteredPokemon.length > 0) {
+            fetchPokemonIds();
+        }
+    }, [filteredPokemon]);
+
+    return (
+        <div className="relative w-full max-w-md px-4 sm:px-0">
+            <input
+                type="text"
+                value={guess}
+                onChange={onChange}
+                className="w-full p-2 sm:p-3 rounded-lg border-2 border-red-200 focus:border-red-500 focus:outline-none transition-colors text-sm sm:text-base"
+                placeholder="Who's that Pokémon...?"
+            />
+            {filteredPokemon.length > 0 && (
+                <ul className="absolute z-10 w-full bg-white border-2 border-red-200 rounded-lg shadow-lg max-h-40 sm:max-h-48 overflow-y-auto mt-1">
+                    {filteredPokemon.map((name, i) => (
+                        <li
+                            key={i}
+                            className="px-4 py-3 sm:px-5 sm:py-4 hover:bg-blue-50 cursor-pointer transition-colors text-sm sm:text-base flex items-center gap-3" // Adjusted padding and gap
+                            onClick={() => onSelect(capitalize(name))}
+                        >
+                            {pokemonImages[name] && (
+                                <img
+                                    src={pokemonImages[name]}
+                                    alt={name}
+                                    className="w-12 h-12 object-contain" // Changed from w-8 h-8
+                                />
+                            )}
+                            <span className="capitalize">{name}</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+});
 
 const GuessButton = memo(({ onClick }) => (
     <button
@@ -159,7 +208,7 @@ const App = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-red-100 to-red-200 px-4 py-6 sm:p-6">
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8 text-gray-800 drop-shadow-sm">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8 font- text-gray-800 drop-shadow-sm">
                     <span className="text-red-600">Poké</span>Guess
                 </h1>
 
@@ -198,18 +247,18 @@ const App = () => {
                                         return (
                                             <div
                                                 key={`${idx}-${i}`}
-                                                className={` rounded-lg flex items-center justify-center ${
+                                                className={`rounded-lg flex items-center justify-center p-2 ${
                                                     correct
                                                         ? "bg-emerald-500"
                                                         : "bg-red-500"
-                                                }`}
+                                                }`} // Added padding
                                             >
                                                 <img
                                                     src={
                                                         g.sprites.front_default
                                                     }
                                                     alt={g.name}
-                                                    className="w-12 h-12 object-contain"
+                                                    className="w-16 h-16 object-contain" // Changed from w-12 h-12
                                                 />
                                             </div>
                                         );
