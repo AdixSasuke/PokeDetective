@@ -91,7 +91,7 @@ const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => {
 const GuessButton = memo(({ onClick }) => (
     <button
         onClick={onClick}
-        className="w-full max-w-md mt-2 sm:mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-sm sm:text-base"
+        className="w-full max-w-md mt-2 sm:mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-base sm:text-lg"
     >
         Catch 'em!
     </button>
@@ -222,7 +222,7 @@ const App = () => {
                     <GuessButton onClick={handleGuess} />
 
                     <div className="w-full bg-white rounded-xl shadow-lg p-3 sm:p-6 mt-4 sm:mt-8 overflow-x-auto border-4 border-red-300">
-                        <div className="grid grid-cols-7 gap-2 sm:gap-3 min-w-[700px]">
+                        <div className="grid grid-cols-7 gap-1 sm:gap-2 min-w-[700px]">
                             {[
                                 "Image",
                                 "Name",
@@ -234,7 +234,7 @@ const App = () => {
                             ].map((h, i) => (
                                 <div
                                     key={i}
-                                    className="flex items-center justify-center bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-extrabold"
+                                    className="flex items-center justify-center bg-red-600 text-white px-3 py-2 rounded-lg text-lg sm:text-xl font-bold"
                                 >
                                     {h.toUpperCase()}
                                 </div>
@@ -247,18 +247,18 @@ const App = () => {
                                         return (
                                             <div
                                                 key={`${idx}-${i}`}
-                                                className={`rounded-lg flex items-center justify-center p-2 ${
+                                                className={`rounded-lg flex items-center justify-center p-1 ${
                                                     correct
                                                         ? "bg-emerald-500"
                                                         : "bg-red-500"
-                                                }`} // Added padding
+                                                }`} // Reduced padding from p-2 to p-1
                                             >
                                                 <img
                                                     src={
                                                         g.sprites.front_default
                                                     }
                                                     alt={g.name}
-                                                    className="w-16 h-16 object-contain" // Changed from w-12 h-12
+                                                    className="w-16 h-16 object-contain" // Keep image size
                                                 />
                                             </div>
                                         );
@@ -266,11 +266,11 @@ const App = () => {
                                     return (
                                         <div
                                             key={`${idx}-${i}`}
-                                            className={`flex items-center justify-center p-1 sm:p-2 rounded-lg font-medium text-white transition-all text-xs sm:text-sm text-center ${
+                                            className={`flex items-center justify-center px-3 py-2 rounded-lg font-semibold text-white transition-all text-sm sm:text-base text-center ${
                                                 correct
                                                     ? "bg-emerald-500 animate-pulse"
                                                     : "bg-red-500"
-                                            }`}
+                                            }`} // Increased text size, reduced padding
                                         >
                                             {attr === "type1" ||
                                             attr === "type2" ||
