@@ -1,0 +1,194 @@
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import fetchPokemonData from "../components/fetchRandomPokemon";
+import { attributes } from "../utils/pokemonUtils";
+import { capitalize } from "../utils/stringUtils";
+
+const usePokeGame = () => {
+    const [targetPokemon, setTargetPokemon] = useState(null);
+    const [guess, setGuess] = useState("");
+    const [guesses, setGuesses] = useState([]);
+    const [win, setWin] = useState(false);
+    const [allPokemon, setAllPokemon] = useState([]);
+    const [filteredPokemon, setFilteredPokemon] = useState([]);
+    const [hints, setHints] = useState([]);
+    const [hintsLeft, setHintsLeft] = useState(3);
+    const [showGiveUpModal, setShowGiveUpModal] = useState(false);
+    const [hasGivenUp, setHasGivenUp] = useState(false);
+
+    useEffect(() => {
+        const fetchTarget = async () => {
+            try {
+                const id = Math.floor(Math.random() * 1010) + 1;
+                const pokemon = await fetchPokemonData(id);
+                console.log(pokemon);
+                setTargetPokemon(pokemon);
+            } catch (error) {
+                console.error("Error fetching target Pokemon:", error);
+            }
+        };
+
+        const fetchAllPokemonNames = async () => {
+            try {
+                const res = await axios.get(
+                    "https://pokeapi.co/api/v2/pokemon?limit=1010"
+                );
+                const names = res.data.results.map((p) => p.name);
+                setAllPokemon(names);
+            } catch (error) {
+                console.error("Error fetching Pokemon names:", error);
+            }
+        };
+
+        fetchTarget();
+        fetchAllPokemonNames();
+    }, []);
+
+    const handleGuess = async () => {
+        if (win || !guess.trim() || hasGivenUp) return;
+
+        const guessed = await fetchPokemonData(guess.trim().toLowerCase());
+        if (!guessed) {
+            alert("Invalid Pokémon name!");
+            return;
+        }
+
+        const isDuplicate = guesses.some((g) => g.name === guessed.name);
+        if (isDuplicate) {
+            alert("You've already guessed this Pokémon!");
+            setGuess("");
+            setFilteredPokemon([]);
+            return;
+        }
+
+        const isCorrect = attributes.every(
+            (attr) => guessed[attr] === targetPokemon[attr]
+        );
+        if (isCorrect) setWin(true);
+
+        setGuesses([...guesses, guessed]);
+        setGuess("");
+        setFilteredPokemon([]);
+    };
+
+    const handleReset = useCallback(async () => {
+        try {
+            const id = Math.floor(Math.random() * 1010) + 1;
+            const pokemon = await fetchPokemonData(id);
+            setTargetPokemon(pokemon);
+            setGuess("");
+            setGuesses([]);
+            setWin(false);
+            setFilteredPokemon([]);
+            setHints([]);
+            setHintsLeft(3);
+            setHasGivenUp(false);
+        } catch (error) {
+            console.error("Error resetting game:", error);
+        }
+    }, []);
+
+    const handleHint = useCallback(() => {
+        if (!targetPokemon || hintsLeft <= 0) return;
+
+        const validAttributes = attributes.filter((attr) => {
+            if (attr === "image") return false;
+
+            const value = targetPokemon[attr];
+            if (
+                !value ||
+                value === "—" ||
+                value === "-" ||
+                value.toLowerCase() === "unknown"
+            )
+                return false;
+
+            return !hints.some((hint) => hint.attribute === attr);
+        });
+
+        if (validAttributes.length > 0) {
+            const randomAttr =
+                validAttributes[
+                    Math.floor(Math.random() * validAttributes.length)
+                ];
+            const value = targetPokemon[randomAttr];
+
+            let hintText;
+            if (randomAttr === "name") {
+                hintText = `The Pokémon's name starts with "${value
+                    .charAt(0)
+                    .toUpperCase()}"`;
+            } else if (randomAttr === "generation") {
+                hintText = `The Pokémon is from Generation ${value}`;
+            } else if (randomAttr === "type1" || randomAttr === "type2") {
+                const typeNumber =
+                    randomAttr === "type1" ? "primary" : "secondary";
+                hintText = `The Pokémon's ${typeNumber} type is ${capitalize(
+                    value
+                )}`;
+            } else if (randomAttr === "color") {
+                hintText = `The Pokémon's color is ${capitalize(value)}`;
+            } else if (randomAttr === "habitat") {
+                hintText = `The Pokémon's habitat is ${capitalize(value)}`;
+            } else {
+                hintText = `${randomAttr}: ${capitalize(value)}`;
+            }
+
+            setHints([...hints, { attribute: randomAttr, text: hintText }]);
+            setHintsLeft(hintsLeft - 1);
+        } else {
+            alert("No more hints available for this Pokémon!");
+        }
+    }, [targetPokemon, hints, hintsLeft]);
+
+    const handleInputChange = useCallback(
+        (e) => {
+            const val = e.target.value.toLowerCase();
+            setGuess(val);
+            if (val.length === 0) {
+                setFilteredPokemon([]);
+            } else {
+                const filtered = allPokemon
+                    .filter((p) => p.startsWith(val))
+                    .slice(0, 8);
+                setFilteredPokemon(filtered);
+            }
+        },
+        [allPokemon]
+    );
+
+    const handleSelect = useCallback((name) => {
+        setGuess(name);
+        setFilteredPokemon([]);
+    }, []);
+
+    const handleGiveUp = useCallback(() => {
+        setShowGiveUpModal(true);
+        setHasGivenUp(true);
+    }, []);
+
+    const closeModal = useCallback(() => {
+        setShowGiveUpModal(false);
+    }, []);
+
+    return {
+        targetPokemon,
+        guess,
+        guesses,
+        win,
+        filteredPokemon,
+        hints,
+        hintsLeft,
+        showGiveUpModal,
+        hasGivenUp,
+        handleGuess,
+        handleReset,
+        handleHint,
+        handleInputChange,
+        handleSelect,
+        handleGiveUp,
+        closeModal,
+    };
+};
+
+export default usePokeGame;
