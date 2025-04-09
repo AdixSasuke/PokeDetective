@@ -3,14 +3,14 @@ import { memo } from "react";
 export const GuessButton = memo(({ onClick, disabled }) => (
     <button
         onClick={onClick}
-        className={`flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-6 rounded-full transition-colors w-full ${
+        className={`flex items-center justify-center gap-1 sm:gap-2 bg-red-500 hover:bg-red-600 text-white font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-full transition-colors w-full text-sm sm:text-base ${
             disabled ? "opacity-50 cursor-not-allowed" : ""
         }`}
         disabled={disabled}
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className="h-4 w-4 sm:h-5 sm:w-5"
             viewBox="0 0 20 20"
             fill="currentColor"
         >
@@ -24,7 +24,7 @@ export const HintButton = memo(({ onClick, hintsLeft }) => (
     <button
         onClick={onClick}
         disabled={hintsLeft <= 0}
-        className={`flex items-center justify-center gap-2 font-medium py-3 px-6 rounded-full transition-colors w-full ${
+        className={`flex items-center justify-center gap-1 sm:gap-2 font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-full transition-colors w-full text-sm sm:text-base ${
             hintsLeft > 0
                 ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
                 : "bg-gray-200 text-gray-500 cursor-not-allowed"
@@ -32,7 +32,7 @@ export const HintButton = memo(({ onClick, hintsLeft }) => (
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className="h-4 w-4 sm:h-5 sm:w-5"
             viewBox="0 0 20 20"
             fill="currentColor"
         >
@@ -42,14 +42,14 @@ export const HintButton = memo(({ onClick, hintsLeft }) => (
                 clipRule="evenodd"
             />
         </svg>
-        {hintsLeft > 0 ? `${hintsLeft} Hints Left` : "No Hints Left"}
+        {hintsLeft > 0 ? `${hintsLeft} Hints` : "No Hints"}
     </button>
 ));
 
 export const ResetButton = memo(({ onClick }) => (
     <button
         onClick={onClick}
-        className="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-full transition-colors mx-auto block"
+        className="mt-4 sm:mt-6 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 sm:py-3 px-5 sm:px-6 rounded-full transition-colors mx-auto block text-sm sm:text-base"
     >
         New Battle
     </button>
@@ -58,11 +58,11 @@ export const ResetButton = memo(({ onClick }) => (
 export const GiveUpButton = memo(({ onClick }) => (
     <button
         onClick={onClick}
-        className="flex items-center justify-center gap-2 bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-full transition-colors w-full mx-auto"
+        className="flex items-center justify-center gap-1 sm:gap-2 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2.5 sm:py-3 px-5 sm:px-6 rounded-full transition-colors w-full mx-auto text-sm sm:text-base"
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className="h-4 w-4 sm:h-5 sm:w-5"
             viewBox="0 0 20 20"
             fill="currentColor"
         >

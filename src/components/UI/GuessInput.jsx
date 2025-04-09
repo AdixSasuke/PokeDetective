@@ -31,14 +31,14 @@ const GuessInput = memo(
                         type="text"
                         value={guess}
                         onChange={onChange}
-                        className="w-full p-3 sm:p-4 rounded-full border-2 border-gray-200 focus:border-red-400 focus:outline-none transition-all text-base shadow-sm pl-5 pr-12"
+                        className="w-full p-2.5 sm:p-3 md:p-4 rounded-full border-2 border-gray-200 focus:border-red-400 focus:outline-none transition-all text-sm sm:text-base shadow-sm pl-4 sm:pl-5 pr-10 sm:pr-12"
                         placeholder="Who's that Pokémon...?"
                         disabled={disabled}
                     />
-                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <div className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6"
+                            className="h-5 w-5 sm:h-6 sm:w-6"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -53,11 +53,11 @@ const GuessInput = memo(
                     </div>
                 </div>
                 {filteredPokemon.length > 0 && (
-                    <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 sm:max-h-56 overflow-y-auto mt-1">
+                    <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-40 sm:max-h-48 overflow-y-auto mt-1">
                         {filteredPokemon.map((name, i) => (
                             <li
                                 key={i}
-                                className="px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors text-base flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                                className="px-3 sm:px-4 py-2 sm:py-3 hover:bg-gray-50 cursor-pointer transition-colors text-sm sm:text-base flex items-center gap-2 sm:gap-3 border-b border-gray-100 last:border-b-0"
                                 onClick={() =>
                                     onSelect(
                                         name.charAt(0).toUpperCase() +
@@ -72,7 +72,7 @@ const GuessInput = memo(
                                             "/placeholder.svg"
                                         }
                                         alt={name}
-                                        className="w-10 h-10 object-contain"
+                                        className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
                                     />
                                 )}
                                 <span className="capitalize font-medium">
