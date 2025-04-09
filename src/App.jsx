@@ -14,16 +14,13 @@ const attributes = [
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "—");
 
 const getPokemonId = (name) => {
-    // Create a map of special cases if needed
     const specialCases = {
         "nidoran-f": 29,
         "nidoran-m": 32,
-        // Add more special cases as needed
     };
 
     if (specialCases[name]) return specialCases[name];
 
-    // For regular Pokemon, fetch their ID from your existing data
     const url = `https://pokeapi.co/api/v2/pokemon/${name}`;
     return fetch(url)
         .then((res) => res.json())
@@ -31,12 +28,10 @@ const getPokemonId = (name) => {
         .catch(() => null);
 };
 
-// Memoized components for better performance
 const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => {
     const [pokemonImages, setPokemonImages] = useState({});
 
     useEffect(() => {
-        // Fetch Pokemon IDs for all filtered Pokemon
         const fetchPokemonIds = async () => {
             const newImages = {};
             for (const name of filteredPokemon) {
@@ -69,14 +64,14 @@ const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => {
                     {filteredPokemon.map((name, i) => (
                         <li
                             key={i}
-                            className="px-4 py-3 sm:px-5 sm:py-4 hover:bg-blue-50 cursor-pointer transition-colors text-sm sm:text-base flex items-center gap-3" // Adjusted padding and gap
+                            className="px-4 py-3 sm:px-5 sm:py-4 hover:bg-blue-50 cursor-pointer transition-colors text-sm sm:text-base flex items-center gap-3"
                             onClick={() => onSelect(capitalize(name))}
                         >
                             {pokemonImages[name] && (
                                 <img
                                     src={pokemonImages[name]}
                                     alt={name}
-                                    className="w-12 h-12 object-contain" // Changed from w-8 h-8
+                                    className="w-12 h-12 object-contain"
                                 />
                             )}
                             <span className="capitalize">{name}</span>
@@ -106,6 +101,20 @@ const ResetButton = memo(({ onClick }) => (
     </button>
 ));
 
+const HintButton = memo(({ onClick, hintsLeft }) => (
+    <button
+        onClick={onClick}
+        disabled={hintsLeft <= 0}
+        className={`w-full max-w-md mt-2 sm:mt-3 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-sm sm:text-base ${
+            hintsLeft > 0
+                ? "bg-blue-500 hover:bg-blue-600"
+                : "bg-gray-400 cursor-not-allowed"
+        }`}
+    >
+        {hintsLeft > 0 ? `Get Hint (${hintsLeft} left)` : "No Hints Left"}
+    </button>
+));
+
 const App = () => {
     const [targetPokemon, setTargetPokemon] = useState(null);
     const [guess, setGuess] = useState("");
@@ -113,6 +122,8 @@ const App = () => {
     const [win, setWin] = useState(false);
     const [allPokemon, setAllPokemon] = useState([]);
     const [filteredPokemon, setFilteredPokemon] = useState([]);
+    const [hints, setHints] = useState([]);
+    const [hintsLeft, setHintsLeft] = useState(3);
 
     useEffect(() => {
         const fetchTarget = async () => {
@@ -151,7 +162,6 @@ const App = () => {
             return;
         }
 
-        // Check if Pokemon was already guessed
         const isDuplicate = guesses.some((g) => g.name === guessed.name);
         if (isDuplicate) {
             alert("You've already guessed this Pokémon!");
@@ -179,10 +189,65 @@ const App = () => {
             setGuesses([]);
             setWin(false);
             setFilteredPokemon([]);
+            setHints([]);
+            setHintsLeft(3);
         } catch (error) {
             console.error("Error resetting game:", error);
         }
     }, []);
+
+    const handleHint = useCallback(() => {
+        if (!targetPokemon || hintsLeft <= 0) return;
+
+        const validAttributes = attributes.filter((attr) => {
+            if (attr === "image") return false;
+
+            const value = targetPokemon[attr];
+            if (
+                !value ||
+                value === "—" ||
+                value === "-" ||
+                value.toLowerCase() === "unknown"
+            )
+                return false;
+
+            return !hints.some((hint) => hint.attribute === attr);
+        });
+
+        if (validAttributes.length > 0) {
+            const randomAttr =
+                validAttributes[
+                    Math.floor(Math.random() * validAttributes.length)
+                ];
+            const value = targetPokemon[randomAttr];
+
+            let hintText;
+            if (randomAttr === "name") {
+                hintText = `The Pokémon's name starts with "${value
+                    .charAt(0)
+                    .toUpperCase()}"`;
+            } else if (randomAttr === "generation") {
+                hintText = `The Pokémon is from Generation ${value}`;
+            } else if (randomAttr === "type1" || randomAttr === "type2") {
+                const typeNumber =
+                    randomAttr === "type1" ? "primary" : "secondary";
+                hintText = `The Pokémon's ${typeNumber} type is ${capitalize(
+                    value
+                )}`;
+            } else if (randomAttr === "color") {
+                hintText = `The Pokémon's color is ${capitalize(value)}`;
+            } else if (randomAttr === "habitat") {
+                hintText = `The Pokémon's habitat is ${capitalize(value)}`;
+            } else {
+                hintText = `${randomAttr}: ${capitalize(value)}`;
+            }
+
+            setHints([...hints, { attribute: randomAttr, text: hintText }]);
+            setHintsLeft(hintsLeft - 1);
+        } else {
+            alert("No more hints available for this Pokémon!");
+        }
+    }, [targetPokemon, hints, hintsLeft]);
 
     const handleInputChange = useCallback(
         (e) => {
@@ -219,7 +284,35 @@ const App = () => {
                         onSelect={handleSelect}
                         filteredPokemon={filteredPokemon}
                     />
-                    <GuessButton onClick={handleGuess} />
+                    <div className="w-full max-w-md flex gap-2">
+                        <div className="flex-1">
+                            <GuessButton onClick={handleGuess} />
+                        </div>
+                        <div className="flex-1">
+                            <HintButton
+                                onClick={handleHint}
+                                hintsLeft={hintsLeft}
+                            />
+                        </div>
+                    </div>
+
+                    {hints.length > 0 && (
+                        <div className="w-full max-w-md bg-blue-100 border-2 border-blue-300 rounded-lg p-3 mt-2">
+                            <h3 className="font-bold text-blue-800 mb-2">
+                                Hints:
+                            </h3>
+                            <ul className="list-disc pl-5">
+                                {hints.map((hint, index) => (
+                                    <li
+                                        key={index}
+                                        className="text-blue-700 mb-1"
+                                    >
+                                        {hint.text}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
 
                     <div className="w-full bg-white rounded-xl shadow-lg p-3 sm:p-6 mt-4 sm:mt-8 overflow-x-auto border-4 border-red-300">
                         <div className="grid grid-cols-7 gap-1 sm:gap-2 min-w-[700px]">
@@ -251,14 +344,14 @@ const App = () => {
                                                     correct
                                                         ? "bg-emerald-500"
                                                         : "bg-red-500"
-                                                }`} // Reduced padding from p-2 to p-1
+                                                }`}
                                             >
                                                 <img
                                                     src={
                                                         g.sprites.front_default
                                                     }
                                                     alt={g.name}
-                                                    className="w-16 h-16 object-contain" // Keep image size
+                                                    className="w-16 h-16 object-contain"
                                                 />
                                             </div>
                                         );
@@ -270,12 +363,12 @@ const App = () => {
                                                 correct
                                                     ? "bg-emerald-500 animate-pulse"
                                                     : "bg-red-500"
-                                            }`} // Increased text size, reduced padding
+                                            }`}
                                         >
                                             {attr === "type1" ||
                                             attr === "type2" ||
                                             attr === "color" ||
-                                            attr === "habitat" // Add habitat to the list of attributes to capitalize
+                                            attr === "habitat"
                                                 ? capitalize(g[attr])
                                                 : attr === "name"
                                                 ? capitalize(g[attr])
