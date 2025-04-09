@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useCallback, memo } from "react";
+"use client";
+
+import { useEffect, useState, useCallback, memo } from "react";
 import fetchPokemonData from "./components/fetchRandomPokemon";
 import axios from "axios";
 
@@ -51,30 +53,53 @@ const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => {
     }, [filteredPokemon]);
 
     return (
-        <div className="relative w-full max-w-md px-4 sm:px-0">
-            <input
-                type="text"
-                value={guess}
-                onChange={onChange}
-                className="w-full p-2 sm:p-3 rounded-lg border-2 border-red-200 focus:border-red-500 focus:outline-none transition-colors text-sm sm:text-base"
-                placeholder="Who's that Pokémon...?"
-            />
+        <div className="relative w-full max-w-md">
+            <div className="relative">
+                <input
+                    type="text"
+                    value={guess}
+                    onChange={onChange}
+                    className="w-full p-3 sm:p-4 rounded-full border-2 border-gray-200 focus:border-red-400 focus:outline-none transition-all text-base shadow-sm pl-5 pr-12"
+                    placeholder="Who's that Pokémon...?"
+                />
+                <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                    </svg>
+                </div>
+            </div>
             {filteredPokemon.length > 0 && (
-                <ul className="absolute z-10 w-full bg-white border-2 border-red-200 rounded-lg shadow-lg max-h-40 sm:max-h-48 overflow-y-auto mt-1">
+                <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 sm:max-h-56 overflow-y-auto mt-1">
                     {filteredPokemon.map((name, i) => (
                         <li
                             key={i}
-                            className="px-4 py-3 sm:px-5 sm:py-4 hover:bg-blue-50 cursor-pointer transition-colors text-sm sm:text-base flex items-center gap-3"
+                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors text-base flex items-center gap-3 border-b border-gray-100 last:border-b-0"
                             onClick={() => onSelect(capitalize(name))}
                         >
                             {pokemonImages[name] && (
                                 <img
-                                    src={pokemonImages[name]}
+                                    src={
+                                        pokemonImages[name] ||
+                                        "/placeholder.svg"
+                                    }
                                     alt={name}
-                                    className="w-12 h-12 object-contain"
+                                    className="w-10 h-10 object-contain"
                                 />
                             )}
-                            <span className="capitalize">{name}</span>
+                            <span className="capitalize font-medium">
+                                {name}
+                            </span>
                         </li>
                     ))}
                 </ul>
@@ -86,18 +111,17 @@ const GuessInput = memo(({ guess, onChange, onSelect, filteredPokemon }) => {
 const GuessButton = memo(({ onClick }) => (
     <button
         onClick={onClick}
-        className="w-full max-w-md mt-2 sm:mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-base sm:text-lg"
+        className="flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-6 rounded-full transition-colors w-full"
     >
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+        >
+            <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+        </svg>
         Catch 'em!
-    </button>
-));
-
-const ResetButton = memo(({ onClick }) => (
-    <button
-        onClick={onClick}
-        className="w-full max-w-md mt-2 sm:mt-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-sm sm:text-base"
-    >
-        New Battle!
     </button>
 ));
 
@@ -105,13 +129,34 @@ const HintButton = memo(({ onClick, hintsLeft }) => (
     <button
         onClick={onClick}
         disabled={hintsLeft <= 0}
-        className={`w-full max-w-md mt-2 sm:mt-3 text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors transform hover:scale-105 active:scale-95 text-sm sm:text-base ${
+        className={`flex items-center justify-center gap-2 font-medium py-3 px-6 rounded-full transition-colors w-full ${
             hintsLeft > 0
-                ? "bg-blue-500 hover:bg-blue-600"
-                : "bg-gray-400 cursor-not-allowed"
+                ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                : "bg-gray-200 text-gray-500 cursor-not-allowed"
         }`}
     >
-        {hintsLeft > 0 ? `Get Hint (${hintsLeft} left)` : "No Hints Left"}
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+        >
+            <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                clipRule="evenodd"
+            />
+        </svg>
+        {hintsLeft > 0 ? `${hintsLeft} Hints Left` : "No Hints Left"}
+    </button>
+));
+
+const ResetButton = memo(({ onClick }) => (
+    <button
+        onClick={onClick}
+        className="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-full transition-colors mx-auto block"
+    >
+        New Battle
     </button>
 ));
 
@@ -271,51 +316,84 @@ const App = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-red-100 to-red-200 px-4 py-6 sm:p-6">
-            <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-8 font- text-gray-800 drop-shadow-sm">
-                    <span className="text-red-600">Poké</span>Guess
-                </h1>
+        <div className="min-h-screen bg-white px-4 py-8 sm:p-8">
+            <div
+                className="max-w-3xl mx-auto"
+                style={{
+                    backgroundImage:
+                        "url('data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='40' stroke='%23FF5A5F' strokeWidth='1' fill='none' strokeOpacity='0.1'/%3E%3C/svg%3E')",
+                    backgroundSize: "200px 200px",
+                }}
+            >
+                <div className="flex flex-col items-center mb-8">
+                    <div className="w-12 h-12 mb-2">
+                        <img src="https://www.pikpng.com/pngl/b/494-4945371_pokeball-sprite-png.png" />
+                    </div>
+                    <h1 className="text-4xl sm:text-5xl font-bold text-center mb-2">
+                        <span className="text-red-500">Poké</span>
+                        <span className="text-gray-800">Guess</span>
+                    </h1>
+                    <p className="text-gray-600 text-center max-w-lg">
+                        Guess the hidden Pokémon! Compare stats to find the
+                        answer.
+                    </p>
+                </div>
 
-                <div className="flex flex-col items-center space-y-4 sm:space-y-6">
+                <div className="flex flex-col items-center space-y-5 max-w-md mx-auto">
                     <GuessInput
                         guess={guess}
                         onChange={handleInputChange}
                         onSelect={handleSelect}
                         filteredPokemon={filteredPokemon}
                     />
-                    <div className="w-full max-w-md flex gap-2">
-                        <div className="flex-1">
-                            <GuessButton onClick={handleGuess} />
-                        </div>
-                        <div className="flex-1">
-                            <HintButton
-                                onClick={handleHint}
-                                hintsLeft={hintsLeft}
-                            />
-                        </div>
+
+                    <div className="w-full grid grid-cols-2 gap-4">
+                        <GuessButton onClick={handleGuess} />
+                        <HintButton
+                            onClick={handleHint}
+                            hintsLeft={hintsLeft}
+                        />
                     </div>
 
                     {hints.length > 0 && (
-                        <div className="w-full max-w-md bg-blue-100 border-2 border-blue-300 rounded-lg p-3 mt-2">
-                            <h3 className="font-bold text-blue-800 mb-2">
-                                Hints:
+                        <div className="w-full bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                            <h3 className="font-medium text-blue-600 mb-3 flex items-center">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-5 w-5 mr-2"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                        clipRule="evenodd"
+                                    />
+                                </svg>
+                                Poké Hints:
                             </h3>
-                            <ul className="list-disc pl-5">
+                            <ul className="space-y-2">
                                 {hints.map((hint, index) => (
                                     <li
                                         key={index}
-                                        className="text-blue-700 mb-1"
+                                        className="flex items-start"
                                     >
-                                        {hint.text}
+                                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm mr-2">
+                                            {index + 1}
+                                        </span>
+                                        <span className="text-gray-700">
+                                            {hint.text}
+                                        </span>
                                     </li>
                                 ))}
                             </ul>
                         </div>
                     )}
+                </div>
 
-                    <div className="w-full bg-white rounded-xl shadow-lg p-3 sm:p-6 mt-4 sm:mt-8 overflow-x-auto border-4 border-red-300">
-                        <div className="grid grid-cols-7 gap-1 sm:gap-2 min-w-[700px]">
+                {guesses.length > 0 && (
+                    <div className="w-full bg-white border border-gray-200 rounded-xl shadow-sm mt-8 overflow-hidden">
+                        <div className="grid grid-cols-7 gap-px bg-gray-100">
                             {[
                                 "Image",
                                 "Name",
@@ -327,43 +405,52 @@ const App = () => {
                             ].map((h, i) => (
                                 <div
                                     key={i}
-                                    className="flex items-center justify-center bg-red-600 text-white px-3 py-2 rounded-lg text-lg sm:text-xl font-bold"
+                                    className="bg-blue-500 text-white px-3 py-3 text-center font-medium"
                                 >
-                                    {h.toUpperCase()}
+                                    {h}
                                 </div>
                             ))}
+
                             {guesses.map((g, idx) =>
                                 attributes.map((attr, i) => {
-                                    const correct =
-                                        g[attr] === targetPokemon[attr];
                                     if (attr === "image") {
                                         return (
                                             <div
                                                 key={`${idx}-${i}`}
-                                                className={`rounded-lg flex items-center justify-center p-1 ${
-                                                    correct
-                                                        ? "bg-emerald-500"
-                                                        : "bg-red-500"
-                                                }`}
+                                                className="bg-red-500 flex items-center justify-center p-2"
                                             >
-                                                <img
-                                                    src={
-                                                        g.sprites.front_default
-                                                    }
-                                                    alt={g.name}
-                                                    className="w-16 h-16 object-contain"
-                                                />
+                                                <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center">
+                                                    <img
+                                                        src={
+                                                            g.sprites
+                                                                .front_default ||
+                                                            "/placeholder.svg"
+                                                        }
+                                                        alt={g.name}
+                                                        className="w-14 h-14 object-contain"
+                                                    />
+                                                </div>
                                             </div>
                                         );
                                     }
+
+                                    // Map attribute names to colors
+                                    const cellColors = {
+                                        name: "bg-red-500 text-white",
+                                        generation: "bg-red-500 text-white",
+                                        type1: "bg-blue-600 text-white",
+                                        type2: "bg-blue-400 text-white",
+                                        color: "bg-green-500 text-white",
+                                        habitat: "bg-red-500 text-white",
+                                    };
+
+                                    // Use a consistent color instead of the mapped colors
+                                    const cellColor = "bg-red-500 text-white";
+
                                     return (
                                         <div
                                             key={`${idx}-${i}`}
-                                            className={`flex items-center justify-center px-3 py-2 rounded-lg font-semibold text-white transition-all text-sm sm:text-base text-center ${
-                                                correct
-                                                    ? "bg-emerald-500 animate-pulse"
-                                                    : "bg-red-500"
-                                            }`}
+                                            className={`${cellColor} flex items-center justify-center p-3 text-center font-medium`}
                                         >
                                             {attr === "type1" ||
                                             attr === "type2" ||
@@ -378,17 +465,27 @@ const App = () => {
                                 })
                             )}
                         </div>
+                        <div className="text-center text-gray-500 py-3 text-sm">
+                            {guesses.length}{" "}
+                            {guesses.length === 1 ? "guess" : "guesses"} so far
+                        </div>
                     </div>
+                )}
 
-                    {win && (
-                        <>
-                            <div className="mt-4 sm:mt-6 text-xl sm:text-2xl font-bold text-red-600 animate-bounce text-center px-4">
-                                You caught {targetPokemon.name.toUpperCase()}!
-                            </div>
-                            <ResetButton onClick={handleReset} />
-                        </>
-                    )}
-                </div>
+                {win && (
+                    <>
+                        <div className="mt-6 text-xl font-bold text-center px-4 py-3 bg-green-100 border border-green-300 rounded-xl">
+                            <span className="text-green-600">
+                                Congratulations!
+                            </span>{" "}
+                            You caught{" "}
+                            <span className="text-blue-600">
+                                {targetPokemon.name.toUpperCase()}!
+                            </span>
+                        </div>
+                        <ResetButton onClick={handleReset} />
+                    </>
+                )}
             </div>
         </div>
     );
