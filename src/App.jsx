@@ -434,18 +434,15 @@ const App = () => {
                                         );
                                     }
 
-                                    // Map attribute names to colors
-                                    const cellColors = {
-                                        name: "bg-red-500 text-white",
-                                        generation: "bg-red-500 text-white",
-                                        type1: "bg-blue-600 text-white",
-                                        type2: "bg-blue-400 text-white",
-                                        color: "bg-green-500 text-white",
-                                        habitat: "bg-red-500 text-white",
-                                    };
+                                    // Check if the guessed value matches the target value
+                                    const isCorrect =
+                                        targetPokemon &&
+                                        g[attr] === targetPokemon[attr];
 
-                                    // Use a consistent color instead of the mapped colors
-                                    const cellColor = "bg-red-500 text-white";
+                                    // Use green background for correct guesses, red for incorrect
+                                    const cellColor = isCorrect
+                                        ? "bg-green-500 text-white"
+                                        : "bg-red-500 text-white";
 
                                     return (
                                         <div
