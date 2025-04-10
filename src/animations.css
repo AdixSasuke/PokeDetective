@@ -26,9 +26,14 @@
 @keyframes shimmer {
     0% {
         background-position: -200% 0;
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
     }
     100% {
         background-position: 200% 0;
+        opacity: 0;
     }
 }
 
@@ -94,7 +99,7 @@
         rgba(255, 255, 255, 0) 75%
     );
     background-size: 200% 100%;
-    animation: shimmer 1.5s ease-out;
+    animation: shimmer 1.5s ease-out forwards;
     pointer-events: none;
 }
 
