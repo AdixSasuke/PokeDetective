@@ -36,7 +36,7 @@ const App = () => {
     return (
         <div className="min-h-screen bg-white px-3 py-5 sm:px-4 sm:py-8 flex flex-col">
             <div
-                className="max-w-3xl mx-auto flex-grow"
+                className="max-w-3xl mx-auto flex-grow w-full"
                 style={{
                     backgroundImage:
                         "url('data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='40' stroke='%23FF5A5F' strokeWidth='1' fill='none' strokeOpacity='0.1'/%3E%3C/svg%3E')",
