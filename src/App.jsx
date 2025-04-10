@@ -49,7 +49,7 @@ const App = () => {
                     </div>
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-1 sm:mb-2">
                         <span className="text-red-500">Poké</span>
-                        <span className="text-gray-800">Guess</span>
+                        <span className="text-gray-800">Detective</span>
                     </h1>
                     <p className="text-sm sm:text-base text-gray-600 text-center max-w-lg px-2">
                         Guess the hidden Pokémon! Compare stats to find the
