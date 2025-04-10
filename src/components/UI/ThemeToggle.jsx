@@ -5,7 +5,7 @@ const ThemeToggle = ({ theme, toggleTheme }) => {
     return (
         <motion.button
             onClick={toggleTheme}
-            className={`fixed z-50 top-4 right-4 p-2 rounded-full transition-colors ${
+            className={`absolute z-50 top-4 right-4 p-2 rounded-full transition-colors ${
                 theme === "light" ? "bg-gray-700" : "bg-amber-50"
             }`}
             aria-label={`Switch to ${

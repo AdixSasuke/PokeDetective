@@ -1,10 +1,40 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { capitalize } from "../../utils/stringUtils";
 
 const CongratulationsModal = ({ targetPokemon, onNewGame, onClose, theme }) => {
     if (!targetPokemon) return null;
     const isDark = theme === "dark";
+
+    // Log when the component mounts to check props
+    useEffect(() => {
+        console.log("CongratulationsModal mounted");
+        console.log("onClose is:", typeof onClose);
+        console.log("onNewGame is:", typeof onNewGame);
+    }, [onClose, onNewGame]);
+
+    // Try a direct function that doesn't use useCallback
+    function closeModal() {
+        console.log("Direct close function called");
+        // Try forcing window refresh as a last resort
+        if (typeof onClose === "function") {
+            onClose();
+        } else {
+            console.error("onClose is not a function");
+            // As a fallback, try to hide the modal directly
+            const modal = document.querySelector(
+                ".congratulations-modal-container"
+            );
+            if (modal) {
+                modal.style.display = "none";
+            }
+        }
+    }
+
+    const backdropVariants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 },
+    };
 
     const modalVariants = {
         hidden: { opacity: 0, y: -50, scale: 0.9 },
@@ -22,7 +52,7 @@ const CongratulationsModal = ({ targetPokemon, onNewGame, onClose, theme }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 px-4 py-5">
+        <div className="fixed inset-0 border bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 px-4 py-5 congratulations-modal-container">
             <motion.div
                 className={`${
                     isDark ? "bg-gray-900" : "bg-white"
@@ -199,7 +229,7 @@ const CongratulationsModal = ({ targetPokemon, onNewGame, onClose, theme }) => {
                         </motion.button>
                         <motion.button
                             onClick={onNewGame}
-                            className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2.5 sm:py-3 px-4 sm:px-5 rounded-full transition-colors text-sm sm:text-base font-medium shadow-md"
+                            className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 sm:py-3 px-4 sm:px-5 rounded-full transition-colors text-sm sm:text-base font-medium shadow-md"
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.97 }}
                         >
@@ -208,6 +238,23 @@ const CongratulationsModal = ({ targetPokemon, onNewGame, onClose, theme }) => {
                     </div>
                 </div>
             </motion.div>
+
+            {/* Add a direct close modal button for testing */}
+            <button
+                className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full"
+                onClick={closeModal}
+                style={{ zIndex: 1000 }}
+            >
+                X
+            </button>
+
+            {/* We'll also try a different approach for the overlay */}
+            <div
+                className="fixed inset-0"
+                style={{ zIndex: -1 }}
+                onClick={closeModal}
+                aria-hidden="true"
+            />
         </div>
     );
 };
