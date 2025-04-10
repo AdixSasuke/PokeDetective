@@ -23,6 +23,9 @@ const usePokeGame = () => {
                 const id = Math.floor(Math.random() * 1010) + 1;
                 const pokemon = await fetchPokemonData(id);
                 setTargetPokemon(pokemon);
+                // Add console log for the target Pokemon name
+                console.log("Target Pokemon for testing:", pokemon?.name);
+                console.log("Target Pokemon details:", pokemon);
             } catch (error) {
                 console.error("Error fetching target Pokemon:", error);
             }
@@ -76,6 +79,9 @@ const usePokeGame = () => {
             const id = Math.floor(Math.random() * 1010) + 1;
             const pokemon = await fetchPokemonData(id);
             setTargetPokemon(pokemon);
+            // Add console log when resetting the game
+            console.log("New target Pokemon for testing:", pokemon?.name);
+            console.log("New target Pokemon details:", pokemon);
             setGuess("");
             setGuesses([]);
             setWin(false);
@@ -187,9 +193,16 @@ const usePokeGame = () => {
     }, []);
 
     const closeModal = useCallback(() => {
+        console.log("usePokeGame closeModal called");
         setShowGiveUpModal(false);
+
+        // When closing from win modal, set win to false
+        if (win) {
+            setWin(false);
+        }
+
         setShowNewBattleButton(true);
-    }, []);
+    }, [win]);
 
     return {
         targetPokemon,
@@ -208,7 +221,7 @@ const usePokeGame = () => {
         handleInputChange,
         handleSelect,
         handleGiveUp,
-        closeModal,
+        closeModal, // Make sure to include closeModal in the returned object
     };
 };
 

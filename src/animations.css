@@ -1,0 +1,126 @@
+@keyframes pokemonEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes pokemonPop {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Added new animations for all guesses */
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInFromRight {
+    0% {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.pokemon-entrance {
+    animation: pokemonEntrance 0.5s ease-out forwards;
+}
+
+.pokemon-pop {
+    animation: pokemonPop 0.6s ease-out forwards;
+}
+
+.guess-item {
+    animation: fadeInScale 0.5s ease-out forwards;
+}
+
+.guess-item-mobile {
+    animation: fadeInScale 0.6s ease-out forwards;
+}
+
+.pokemon-image {
+    animation: pokemonPop 0.6s ease-out forwards;
+}
+
+.new-guess {
+    position: relative;
+    overflow: hidden;
+}
+
+.new-guess::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 25%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-out;
+    pointer-events: none;
+}
+
+/* Added for staggered animations */
+.staggered-item {
+    opacity: 0;
+}
+
+.staggered-item:nth-child(1) {
+    animation: slideInFromRight 0.3s ease-out 0.05s forwards;
+}
+.staggered-item:nth-child(2) {
+    animation: slideInFromRight 0.3s ease-out 0.1s forwards;
+}
+.staggered-item:nth-child(3) {
+    animation: slideInFromRight 0.3s ease-out 0.15s forwards;
+}
+.staggered-item:nth-child(4) {
+    animation: slideInFromRight 0.3s ease-out 0.2s forwards;
+}
+.staggered-item:nth-child(5) {
+    animation: slideInFromRight 0.3s ease-out 0.25s forwards;
+}
+.staggered-item:nth-child(6) {
+    animation: slideInFromRight 0.3s ease-out 0.3s forwards;
+}
+.staggered-item:nth-child(7) {
+    animation: slideInFromRight 0.3s ease-out 0.35s forwards;
+}

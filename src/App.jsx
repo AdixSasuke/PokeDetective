@@ -11,11 +11,11 @@ import {
 } from "./components/UI/Buttons";
 import HintsList from "./components/Hints/HintsList";
 import GuessTable from "./components/Guesses/GuessTable";
-import GiveUpModal from "./components/Modals/GiveUpModal";
-import CongratulationsModal from "./components/Modals/CongratulationsModal";
+import UniversalModal from "./components/Modals/UniversalModal";
 import ThemeToggle from "./components/UI/ThemeToggle";
 import usePokeGame from "./hooks/usePokeGame";
 import useDarkMode from "./hooks/useDarkMode";
+import "./animations.css";
 
 // Animation variants
 const containerVariants = {
@@ -162,9 +162,60 @@ const App = () => {
                             </motion.div>
                         )}
                     </AnimatePresence>
+
+                    {targetPokemon &&
+                        !win &&
+                        guesses.length > 0 &&
+                        !showNewBattleButton && (
+                            <motion.div
+                                className="w-full flex justify-center mt-2"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.3 }}
+                            >
+                                <motion.div
+                                    whileTap={{ scale: 0.95 }}
+                                    className="w-[40%]"
+                                >
+                                    <GiveUpButton onClick={handleGiveUp} />
+                                </motion.div>
+                            </motion.div>
+                        )}
+
+                    {showNewBattleButton && !win && (
+                        <motion.div
+                            className="w-full"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 25,
+                            }}
+                        >
+                            <div className="text-center mb-4">
+                                <p
+                                    className={`text-base ${
+                                        theme === "dark"
+                                            ? "text-gray-300"
+                                            : "text-gray-600"
+                                    }`}
+                                >
+                                    Ready to catch another Pokémon?
+                                </p>
+                            </div>
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="flex justify-center"
+                            >
+                                <ResetButton onClick={handleReset} />
+                            </motion.div>
+                        </motion.div>
+                    )}
                 </motion.div>
 
-                <AnimatePresence>
+                <AnimatePresence mode="popLayout">
                     {guesses.length > 0 && (
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -180,88 +231,34 @@ const App = () => {
                     )}
                 </AnimatePresence>
 
-                {targetPokemon &&
-                    !win &&
-                    guesses.length > 0 &&
-                    !showNewBattleButton && (
-                        <motion.div
-                            className="max-w-md mx-auto mt-5 sm:mt-6 px-2 sm:px-0"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.3 }}
-                        >
-                            <motion.div whileTap={{ scale: 0.95 }}>
-                                <GiveUpButton onClick={handleGiveUp} />
-                            </motion.div>
-                        </motion.div>
-                    )}
-
-                {showNewBattleButton && !win && (
-                    <motion.div
-                        className="max-w-md mx-auto mt-5 sm:mt-6 px-2 sm:px-0"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                            type: "spring",
-                            stiffness: 300,
-                            damping: 25,
-                        }}
-                    >
-                        <div className="text-center mb-4">
-                            <p
-                                className={`text-base ${
-                                    theme === "dark"
-                                        ? "text-gray-300"
-                                        : "text-gray-600"
-                                }`}
-                            >
-                                Ready to catch another Pokémon?
-                            </p>
-                        </div>
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <ResetButton onClick={handleReset} />
-                        </motion.div>
-                    </motion.div>
-                )}
-
                 <AnimatePresence>
                     {win && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                        >
-                            <CongratulationsModal
-                                targetPokemon={targetPokemon}
-                                onNewGame={handleReset}
-                                theme={theme}
-                            />
-                        </motion.div>
+                        <UniversalModal
+                            targetPokemon={targetPokemon}
+                            onNewGame={handleReset}
+                            onClose={closeModal}
+                            theme={theme}
+                            titleText="You caught the Pokémon!"
+                            accentColor="green"
+                            buttonColor="green"
+                        />
                     )}
                 </AnimatePresence>
 
                 <AnimatePresence>
                     {showGiveUpModal && targetPokemon && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                        >
-                            <GiveUpModal
-                                targetPokemon={targetPokemon}
-                                onClose={closeModal}
-                                onNewGame={() => {
-                                    closeModal();
-                                    handleReset();
-                                }}
-                                theme={theme}
-                            />
-                        </motion.div>
+                        <UniversalModal
+                            targetPokemon={targetPokemon}
+                            onClose={closeModal}
+                            onNewGame={() => {
+                                closeModal();
+                                handleReset();
+                            }}
+                            theme={theme}
+                            titleText="The Pokémon was..."
+                            accentColor="red"
+                            buttonColor="red"
+                        />
                     )}
                 </AnimatePresence>
             </motion.div>

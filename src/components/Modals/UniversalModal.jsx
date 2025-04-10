@@ -2,7 +2,16 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { capitalize } from "../../utils/stringUtils";
 
-const CongratulationsModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
+const UniversalModal = ({
+    targetPokemon,
+    onClose,
+    onNewGame,
+    theme,
+    titleText,
+    accentColor,
+    buttonColor,
+    shouldAnimate = true,
+}) => {
     if (!targetPokemon) return null;
     const isDark = theme === "dark";
 
@@ -34,6 +43,32 @@ const CongratulationsModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
         },
     };
 
+    const colorMap = {
+        green: {
+            border: isDark ? "border-green-600" : "border-green-500",
+            text: isDark ? "text-green-400" : "text-green-600",
+            label: isDark ? "text-green-300" : "text-green-600",
+            glow: isDark ? "bg-green-700/30" : "bg-green-100/50",
+            button: "bg-green-500 hover:bg-green-600",
+        },
+        red: {
+            border: isDark ? "border-red-600" : "border-red-500",
+            text: isDark ? "text-red-400" : "text-red-600",
+            label: isDark ? "text-red-300" : "text-red-600",
+            glow: isDark ? "bg-red-700/30" : "bg-red-100/50",
+            button: "bg-red-500 hover:bg-red-600",
+        },
+        blue: {
+            border: isDark ? "border-blue-600" : "border-blue-500",
+            text: isDark ? "text-blue-400" : "text-blue-600",
+            label: isDark ? "text-blue-300" : "text-blue-600",
+            glow: isDark ? "bg-blue-700/30" : "bg-blue-100/50",
+            button: "bg-blue-500 hover:bg-blue-600",
+        },
+    };
+
+    const colors = colorMap[accentColor] || colorMap.green;
+
     return (
         <AnimatePresence mode="wait">
             <motion.div
@@ -47,10 +82,8 @@ const CongratulationsModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                 <motion.div
                     className={`${
                         isDark ? "bg-gray-900" : "bg-white"
-                    } rounded-xl p-4 sm:p-6 max-w-md w-full mx-auto shadow-2xl border ${
-                        isDark
-                            ? "border-2 border-green-600"
-                            : "border-2 border-green-500"
+                    } rounded-xl p-4 sm:p-6 max-w-md w-full mx-auto shadow-2xl border-2 ${
+                        colors.border
                     }`}
                     variants={modalVariants}
                     initial="hidden"
@@ -64,12 +97,16 @@ const CongratulationsModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                                 isDark ? "text-gray-100" : "text-gray-800"
                             }`}
                         >
-                            You caught the Pokémon!
+                            {titleText}
                         </h3>
                         <div className="relative">
                             <motion.div
                                 className="w-28 h-28 sm:w-36 sm:h-36 mx-auto mb-4 sm:mb-5 relative z-10"
-                                initial={{ scale: 0.5, opacity: 0 }}
+                                initial={
+                                    shouldAnimate
+                                        ? { scale: 0.5, opacity: 0 }
+                                        : { scale: 1, opacity: 1 }
+                                }
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ delay: 0.2, duration: 0.5 }}
                                 whileHover={{
@@ -84,21 +121,21 @@ const CongratulationsModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                                 />
                             </motion.div>
                             <motion.div
-                                className={`absolute inset-0 rounded-full ${
-                                    isDark
-                                        ? "bg-green-700/30"
-                                        : "bg-green-100/50"
-                                } blur-xl -z-0`}
-                                initial={{ scale: 0, opacity: 0 }}
+                                className={`absolute inset-0 rounded-full ${colors.glow} blur-xl -z-0`}
+                                initial={
+                                    shouldAnimate
+                                        ? { scale: 0, opacity: 0 }
+                                        : { scale: 1.2, opacity: 0.7 }
+                                }
                                 animate={{ scale: 1.2, opacity: 0.7 }}
                                 transition={{ delay: 0.3, duration: 0.7 }}
                             />
                         </div>
                         <motion.p
-                            className={`text-xl sm:text-2xl font-bold ${
-                                isDark ? "text-green-400" : "text-green-600"
-                            } mb-4 sm:mb-5`}
-                            initial={{ opacity: 0 }}
+                            className={`text-xl sm:text-2xl font-bold ${colors.text} mb-4 sm:mb-5`}
+                            initial={
+                                shouldAnimate ? { opacity: 0 } : { opacity: 1 }
+                            }
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.4 }}
                         >
@@ -113,17 +150,15 @@ const CongratulationsModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                                         ? "shadow-black/20"
                                         : "shadow-gray-200"
                                 }`}
-                                initial={{ x: -20, opacity: 0 }}
+                                initial={
+                                    shouldAnimate
+                                        ? { x: -20, opacity: 0 }
+                                        : { x: 0, opacity: 1 }
+                                }
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ delay: 0.5 }}
                             >
-                                <span
-                                    className={`font-medium ${
-                                        isDark
-                                            ? "text-green-300"
-                                            : "text-green-600"
-                                    }`}
-                                >
+                                <span className={`font-medium ${colors.label}`}>
                                     Type:
                                 </span>{" "}
                                 <span
@@ -147,17 +182,15 @@ const CongratulationsModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                                         ? "shadow-black/20"
                                         : "shadow-gray-200"
                                 }`}
-                                initial={{ x: 20, opacity: 0 }}
+                                initial={
+                                    shouldAnimate
+                                        ? { x: 20, opacity: 0 }
+                                        : { x: 0, opacity: 1 }
+                                }
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ delay: 0.5 }}
                             >
-                                <span
-                                    className={`font-medium ${
-                                        isDark
-                                            ? "text-green-300"
-                                            : "text-green-600"
-                                    }`}
-                                >
+                                <span className={`font-medium ${colors.label}`}>
                                     Gen:
                                 </span>{" "}
                                 <span
@@ -178,17 +211,15 @@ const CongratulationsModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                                         ? "shadow-black/20"
                                         : "shadow-gray-200"
                                 }`}
-                                initial={{ x: -20, opacity: 0 }}
+                                initial={
+                                    shouldAnimate
+                                        ? { x: -20, opacity: 0 }
+                                        : { x: 0, opacity: 1 }
+                                }
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ delay: 0.6 }}
                             >
-                                <span
-                                    className={`font-medium ${
-                                        isDark
-                                            ? "text-green-300"
-                                            : "text-green-600"
-                                    }`}
-                                >
+                                <span className={`font-medium ${colors.label}`}>
                                     Color:
                                 </span>{" "}
                                 <span
@@ -209,17 +240,15 @@ const CongratulationsModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                                         ? "shadow-black/20"
                                         : "shadow-gray-200"
                                 }`}
-                                initial={{ x: 20, opacity: 0 }}
+                                initial={
+                                    shouldAnimate
+                                        ? { x: 20, opacity: 0 }
+                                        : { x: 0, opacity: 1 }
+                                }
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ delay: 0.6 }}
                             >
-                                <span
-                                    className={`font-medium ${
-                                        isDark
-                                            ? "text-green-300"
-                                            : "text-green-600"
-                                    }`}
-                                >
+                                <span className={`font-medium ${colors.label}`}>
                                     Habitat:
                                 </span>{" "}
                                 <span
@@ -248,7 +277,7 @@ const CongratulationsModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                             </motion.button>
                             <motion.button
                                 onClick={onNewGame}
-                                className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2.5 sm:py-3 px-4 sm:px-5 rounded-full transition-colors text-sm sm:text-base font-medium shadow-md"
+                                className={`flex-1 ${colors.button} text-white py-2.5 sm:py-3 px-4 sm:px-5 rounded-full transition-colors text-sm sm:text-base font-medium shadow-md`}
                                 whileHover={{ scale: 1.03 }}
                                 whileTap={{ scale: 0.97 }}
                             >
@@ -262,4 +291,4 @@ const CongratulationsModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
     );
 };
 
-export default CongratulationsModal;
+export default UniversalModal;
