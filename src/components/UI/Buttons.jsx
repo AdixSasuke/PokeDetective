@@ -94,10 +94,14 @@ export const ResetButton = memo(({ onClick }) => (
     </motion.button>
 ));
 
-export const GiveUpButton = memo(({ onClick }) => (
+export const GiveUpButton = memo(({ onClick, theme }) => (
     <motion.button
         onClick={onClick}
-        className="flex items-center justify-center gap-1 sm:gap-2 border-1 bg-gray-800 hover:bg-gray-600 text-white font-medium py-2.5 sm:py-3 px-5 sm:px-6 rounded-full transition-colors w-full text-sm sm:text-base"
+        className={`flex items-center justify-center gap-1 sm:gap-2 font-medium py-2.5 sm:py-3 px-5 sm:px-6 rounded-full transition-colors w-full text-sm sm:text-base ${
+            theme === "dark"
+                ? "bg-gray-800 hover:bg-gray-600 text-white"
+                : "bg-white border border-[#365370] hover:border-gray-700 text-[#365370] hover:text-gray-700"
+        }`}
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
         transition={{
