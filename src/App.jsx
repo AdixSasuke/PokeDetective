@@ -12,6 +12,7 @@ import {
 import HintsList from "./components/Hints/HintsList";
 import GuessTable from "./components/Guesses/GuessTable";
 import GiveUpModal from "./components/Modals/GiveUpModal";
+import CongratulationsModal from "./components/Modals/CongratulationsModal";
 import ThemeToggle from "./components/UI/ThemeToggle";
 import usePokeGame from "./hooks/usePokeGame";
 import useDarkMode from "./hooks/useDarkMode";
@@ -229,55 +230,16 @@ const App = () => {
                 <AnimatePresence>
                     {win && (
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.5 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
                         >
-                            <motion.div
-                                className={`mt-5 sm:mt-6 text-base sm:text-xl font-bold text-center px-3 py-3 ${
-                                    theme === "dark"
-                                        ? "bg-green-900 border-green-700"
-                                        : "bg-green-100 border-green-300"
-                                } border rounded-xl mx-2 sm:mx-4`}
-                                animate={{
-                                    boxShadow: [
-                                        "0px 0px 0px rgba(0,200,0,0)",
-                                        "0px 0px 20px rgba(0,200,0,0.3)",
-                                        "0px 0px 0px rgba(0,200,0,0)",
-                                    ],
-                                }}
-                                transition={{
-                                    repeat: 3,
-                                    duration: 1.5,
-                                }}
-                            >
-                                <span
-                                    className={
-                                        theme === "dark"
-                                            ? "text-green-400"
-                                            : "text-green-600"
-                                    }
-                                >
-                                    Congratulations!
-                                </span>{" "}
-                                You caught{" "}
-                                <span
-                                    className={
-                                        theme === "dark"
-                                            ? "text-blue-400"
-                                            : "text-blue-600"
-                                    }
-                                >
-                                    {targetPokemon.name.toUpperCase()}!
-                                </span>
-                            </motion.div>
-                            <motion.div
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="flex justify-center mt-4"
-                            >
-                                <ResetButton onClick={handleReset} />
-                            </motion.div>
+                            <CongratulationsModal
+                                targetPokemon={targetPokemon}
+                                onNewGame={handleReset}
+                                theme={theme}
+                            />
                         </motion.div>
                     )}
                 </AnimatePresence>

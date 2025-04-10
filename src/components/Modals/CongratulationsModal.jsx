@@ -2,14 +2,9 @@ import React from "react";
 import { motion } from "framer-motion";
 import { capitalize } from "../../utils/stringUtils";
 
-const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
+const CongratulationsModal = ({ targetPokemon, onNewGame, onClose, theme }) => {
     if (!targetPokemon) return null;
     const isDark = theme === "dark";
-
-    const backdropVariants = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1 },
-    };
 
     const modalVariants = {
         hidden: { opacity: 0, y: -50, scale: 0.9 },
@@ -27,12 +22,12 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
     };
 
     return (
-        <div className="fixed inset-0 border bg-black/50 flex items-center backdrop-blur-xs justify-center z-50 px-4 py-5">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 px-4 py-5">
             <motion.div
                 className={`${
                     isDark ? "bg-gray-900" : "bg-white"
                 } rounded-xl p-4 sm:p-6 max-w-md w-full mx-auto shadow-2xl border ${
-                    isDark ? "border-red-700" : "border-red-200"
+                    isDark ? "border-green-700" : "border-green-200"
                 }`}
                 variants={modalVariants}
                 initial="hidden"
@@ -45,7 +40,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                             isDark ? "text-gray-100" : "text-gray-800"
                         }`}
                     >
-                        The Pokémon was...
+                        You caught the Pokémon!
                     </h3>
                     <div className="relative">
                         <motion.div
@@ -63,7 +58,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                         </motion.div>
                         <motion.div
                             className={`absolute inset-0 rounded-full ${
-                                isDark ? "bg-red-700/30" : "bg-red-100/50"
+                                isDark ? "bg-green-700/30" : "bg-green-100/50"
                             } blur-xl -z-0`}
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1.2, opacity: 0.7 }}
@@ -72,7 +67,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                     </div>
                     <motion.p
                         className={`text-xl sm:text-2xl font-bold ${
-                            isDark ? "text-red-400" : "text-red-600"
+                            isDark ? "text-green-400" : "text-green-600"
                         } mb-4 sm:mb-5`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -80,6 +75,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                     >
                         {capitalize(targetPokemon.name)}
                     </motion.p>
+
                     <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-5 sm:mb-6 text-xs sm:text-sm">
                         <motion.div
                             className={`${
@@ -93,7 +89,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                         >
                             <span
                                 className={`font-medium ${
-                                    isDark ? "text-red-300" : "text-red-600"
+                                    isDark ? "text-green-300" : "text-green-600"
                                 }`}
                             >
                                 Type:
@@ -121,7 +117,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                         >
                             <span
                                 className={`font-medium ${
-                                    isDark ? "text-red-300" : "text-red-600"
+                                    isDark ? "text-green-300" : "text-green-600"
                                 }`}
                             >
                                 Gen:
@@ -146,7 +142,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                         >
                             <span
                                 className={`font-medium ${
-                                    isDark ? "text-red-300" : "text-red-600"
+                                    isDark ? "text-green-300" : "text-green-600"
                                 }`}
                             >
                                 Color:
@@ -171,7 +167,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                         >
                             <span
                                 className={`font-medium ${
-                                    isDark ? "text-red-300" : "text-red-600"
+                                    isDark ? "text-green-300" : "text-green-600"
                                 }`}
                             >
                                 Habitat:
@@ -185,6 +181,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                             </span>
                         </motion.div>
                     </div>
+
                     <div className="flex gap-3 sm:gap-4">
                         <motion.button
                             onClick={onClose}
@@ -200,7 +197,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                         </motion.button>
                         <motion.button
                             onClick={onNewGame}
-                            className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 sm:py-3 px-4 sm:px-5 rounded-full transition-colors text-sm sm:text-base font-medium shadow-md"
+                            className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2.5 sm:py-3 px-4 sm:px-5 rounded-full transition-colors text-sm sm:text-base font-medium shadow-md"
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.97 }}
                         >
@@ -213,4 +210,4 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
     );
 };
 
-export default GiveUpModal;
+export default CongratulationsModal;

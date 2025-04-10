@@ -121,21 +121,35 @@ const usePokeGame = () => {
                     .toUpperCase()}"`;
             } else if (randomAttr === "generation") {
                 hintText = `The Pokémon is from Generation ${value}`;
-            } else if (randomAttr === "type1" || randomAttr === "type2") {
-                const typeNumber =
-                    randomAttr === "type1" ? "primary" : "secondary";
-                hintText = `The Pokémon's ${typeNumber} type is ${capitalize(
+            } else if (randomAttr === "type1") {
+                hintText = `The Pokémon's primary type is ${capitalize(value)}`;
+            } else if (randomAttr === "type2" && value !== "—") {
+                hintText = `The Pokémon's secondary type is ${capitalize(
                     value
                 )}`;
             } else if (randomAttr === "color") {
                 hintText = `The Pokémon's color is ${capitalize(value)}`;
-            } else if (randomAttr === "habitat") {
+            } else if (
+                randomAttr === "habitat" &&
+                value.toLowerCase() !== "unknown"
+            ) {
                 hintText = `The Pokémon's habitat is ${capitalize(value)}`;
             } else {
-                hintText = `${randomAttr}: ${capitalize(value)}`;
+                // Skip this hint if it's not useful (like type2="—" or habitat="unknown")
+                // and try again
+                setHintsLeft(hintsLeft);
+                handleHint();
+                return;
             }
 
-            setHints([...hints, { attribute: randomAttr, text: hintText }]);
+            setHints([
+                ...hints,
+                {
+                    attribute: randomAttr,
+                    text: hintText,
+                    value: value, // Store the actual value for comparison
+                },
+            ]);
             setHintsLeft(hintsLeft - 1);
         } else {
             alert("No more hints available for this Pokémon!");

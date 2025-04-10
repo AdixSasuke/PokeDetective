@@ -75,14 +75,14 @@ export const ResetButton = memo(({ onClick }) => (
         whileTap={{ scale: 0.95 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
-        New Battle
+        New Game
     </motion.button>
 ));
 
 export const GiveUpButton = memo(({ onClick }) => (
     <motion.button
         onClick={onClick}
-        className="flex items-center justify-center gap-1 sm:gap-2 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2.5 sm:py-3 px-5 sm:px-6 rounded-full transition-colors w-full mx-auto text-sm sm:text-base"
+        className="flex items-center justify-center gap-1 sm:gap-2 border-1 bg-gray-800 hover:bg-gray-600 text-white font-medium py-2.5 sm:py-3 px-5 sm:px-6 rounded-full transition-colors w-[40%] mx-auto text-sm sm:text-base"
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}

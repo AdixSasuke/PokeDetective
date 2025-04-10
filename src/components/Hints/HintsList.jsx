@@ -1,5 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { capitalize } from "../../utils/stringUtils";
 
 const HintsList = ({ hints, theme }) => {
     if (!hints || hints.length === 0) return null;
