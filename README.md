@@ -1,8 +1,6 @@
-# PokéDetective 🔍
+![PokéDetective Game](https://i.postimg.cc/PqZTg3Qr/4bef700777454b671bf93670fc3fec788f1c2f83da39a3ee5e6b4b0d3255bfef95601890afd80709da39a3ee5e6b4b0d3255.png)
 
 A React-based Pokémon guessing game where you test your knowledge of Pokémon by trying to identify the hidden Pokémon through attributes like types, generation, color, and habitat.
-
-![PokéDetective Game](https://i.postimg.cc/PqZTg3Qr/4bef700777454b671bf93670fc3fec788f1c2f83da39a3ee5e6b4b0d3255bfef95601890afd80709da39a3ee5e6b4b0d3255.png)
 
 ## 🎮 How to Play
 
