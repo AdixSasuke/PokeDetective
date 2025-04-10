@@ -91,7 +91,7 @@ const LoadingScreen = ({ theme }) => {
                 className="w-20 h-20 mb-6"
             >
                 <img
-                    src="https://www.pikpng.com/pngl/b/494-4945371_pokeball-sprite-png.png"
+                    src="/pokebola.png"
                     alt="Pokéball Loading"
                     className="w-full h-full"
                 />
@@ -204,10 +204,7 @@ const App = () => {
                                         transition: { duration: 0.6 },
                                     }}
                                 >
-                                    <img
-                                        src="https://www.pikpng.com/pngl/b/494-4945371_pokeball-sprite-png.png"
-                                        alt="Pokéball"
-                                    />
+                                    <img src="/pokebola.png" alt="Pokéball" />
                                 </motion.div>
                                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-1 sm:mb-2">
                                     <span className="text-red-500">Poké</span>
