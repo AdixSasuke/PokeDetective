@@ -22,7 +22,12 @@ export const GuessButton = memo(({ onClick, disabled }) => (
         custom={disabled}
         whileHover="hover"
         whileTap="tap"
-        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        transition={{
+            type: "spring",
+            stiffness: 400,
+            damping: 17,
+            transitionProperties: ["scale"],
+        }}
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +37,7 @@ export const GuessButton = memo(({ onClick, disabled }) => (
         >
             <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
         </svg>
-        Catch 'em!
+        Guess
     </motion.button>
 ));
 
@@ -49,7 +54,12 @@ export const HintButton = memo(({ onClick, hintsLeft }) => (
         custom={hintsLeft <= 0}
         whileHover="hover"
         whileTap="tap"
-        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        transition={{
+            type: "spring",
+            stiffness: 400,
+            damping: 17,
+            transitionProperties: ["scale"],
+        }}
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +83,12 @@ export const ResetButton = memo(({ onClick }) => (
         className="mt-2 sm:mt-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 sm:py-3 px-5 sm:px-6 rounded-full transition-colors mx-auto block text-sm sm:text-base"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        transition={{
+            type: "spring",
+            stiffness: 400,
+            damping: 17,
+            transitionProperties: ["scale"],
+        }}
     >
         New Game
     </motion.button>
@@ -85,7 +100,12 @@ export const GiveUpButton = memo(({ onClick }) => (
         className="flex items-center justify-center gap-1 sm:gap-2 border-1 bg-gray-800 hover:bg-gray-600 text-white font-medium py-2.5 sm:py-3 px-5 sm:px-6 rounded-full transition-colors w-full text-sm sm:text-base"
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
-        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        transition={{
+            type: "spring",
+            stiffness: 400,
+            damping: 17,
+            transitionProperties: ["scale"],
+        }}
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -23,9 +23,6 @@ const usePokeGame = () => {
                 const id = Math.floor(Math.random() * 1010) + 1;
                 const pokemon = await fetchPokemonData(id);
                 setTargetPokemon(pokemon);
-                // Add console log for the target Pokemon name
-                console.log("Target Pokemon for testing:", pokemon?.name);
-                console.log("Target Pokemon details:", pokemon);
             } catch (error) {
                 console.error("Error fetching target Pokemon:", error);
             }
@@ -79,9 +76,6 @@ const usePokeGame = () => {
             const id = Math.floor(Math.random() * 1010) + 1;
             const pokemon = await fetchPokemonData(id);
             setTargetPokemon(pokemon);
-            // Add console log when resetting the game
-            console.log("New target Pokemon for testing:", pokemon?.name);
-            console.log("New target Pokemon details:", pokemon);
             setGuess("");
             setGuesses([]);
             setWin(false);
@@ -141,8 +135,6 @@ const usePokeGame = () => {
             ) {
                 hintText = `The Pokémon's habitat is ${capitalize(value)}`;
             } else {
-                // Skip this hint if it's not useful (like type2="—" or habitat="unknown")
-                // and try again
                 setHintsLeft(hintsLeft);
                 handleHint();
                 return;
@@ -153,7 +145,7 @@ const usePokeGame = () => {
                 {
                     attribute: randomAttr,
                     text: hintText,
-                    value: value, // Store the actual value for comparison
+                    value: value,
                 },
             ]);
             setHintsLeft(hintsLeft - 1);
@@ -167,7 +159,6 @@ const usePokeGame = () => {
             const inputValue = e.target.value;
             const lowerCaseValue = inputValue.toLowerCase();
 
-            // Set the display value as-is (preserving case)
             setGuess(inputValue);
 
             if (lowerCaseValue.length === 0) {
@@ -193,10 +184,8 @@ const usePokeGame = () => {
     }, []);
 
     const closeModal = useCallback(() => {
-        console.log("usePokeGame closeModal called");
         setShowGiveUpModal(false);
 
-        // When closing from win modal, set win to false
         if (win) {
             setWin(false);
         }
@@ -221,7 +210,7 @@ const usePokeGame = () => {
         handleInputChange,
         handleSelect,
         handleGiveUp,
-        closeModal, // Make sure to include closeModal in the returned object
+        closeModal,
     };
 };
 

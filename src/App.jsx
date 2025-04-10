@@ -263,6 +263,31 @@ const App = () => {
                 </AnimatePresence>
             </motion.div>
 
+            {/* How to play instructions */}
+            <motion.div
+                className="mt-6 text-center max-w-md mx-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+            >
+                <h3
+                    className={`font-semibold ${
+                        theme === "dark" ? "text-gray-200" : "text-gray-700"
+                    } mb-1`}
+                >
+                    How to Play
+                </h3>
+                <p
+                    className={`text-sm ${
+                        theme === "dark" ? "text-gray-400" : "text-gray-600"
+                    }`}
+                >
+                    Type a Pokémon name and make a guess. Green cells show
+                    correct attributes, red cells show incorrect ones. Use hints
+                    if you're stuck. Good luck catching them all!
+                </p>
+            </motion.div>
+
             <motion.footer
                 className="mt-6 py-4 text-center"
                 initial={{ opacity: 0 }}
