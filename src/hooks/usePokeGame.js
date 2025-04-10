@@ -15,6 +15,7 @@ const usePokeGame = () => {
     const [hintsLeft, setHintsLeft] = useState(3);
     const [showGiveUpModal, setShowGiveUpModal] = useState(false);
     const [hasGivenUp, setHasGivenUp] = useState(false);
+    const [showNewBattleButton, setShowNewBattleButton] = useState(false);
 
     useEffect(() => {
         const fetchTarget = async () => {
@@ -82,6 +83,7 @@ const usePokeGame = () => {
             setHints([]);
             setHintsLeft(3);
             setHasGivenUp(false);
+            setShowNewBattleButton(false);
         } catch (error) {
             console.error("Error resetting game:", error);
         }
@@ -168,6 +170,7 @@ const usePokeGame = () => {
 
     const closeModal = useCallback(() => {
         setShowGiveUpModal(false);
+        setShowNewBattleButton(true);
     }, []);
 
     return {
@@ -180,6 +183,7 @@ const usePokeGame = () => {
         hintsLeft,
         showGiveUpModal,
         hasGivenUp,
+        showNewBattleButton,
         handleGuess,
         handleReset,
         handleHint,

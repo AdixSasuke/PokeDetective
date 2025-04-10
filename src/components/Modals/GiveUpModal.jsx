@@ -27,17 +27,13 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
     };
 
     return (
-        <motion.div
-            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 px-4 py-5"
-            variants={backdropVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-        >
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 py-5">
             <motion.div
                 className={`${
                     isDark ? "bg-gray-800" : "bg-white"
-                } rounded-xl p-4 sm:p-6 max-w-md w-full mx-auto shadow-xl`}
+                } rounded-xl p-4 sm:p-6 max-w-md w-full mx-auto shadow-2xl border ${
+                    isDark ? "border-gray-700" : "border-gray-200"
+                }`}
                 variants={modalVariants}
                 initial="hidden"
                 animate="visible"
@@ -45,79 +41,148 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
             >
                 <div className="text-center">
                     <h3
-                        className={`text-lg sm:text-xl font-bold mb-2 ${
+                        className={`text-lg sm:text-xl font-bold mb-3 ${
                             isDark ? "text-gray-100" : "text-gray-800"
                         }`}
                     >
                         The Pokémon was...
                     </h3>
-                    <motion.div
-                        className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-3 sm:mb-4"
-                        initial={{ scale: 0.5, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.2, duration: 0.5 }}
-                    >
-                        <img
-                            src={targetPokemon.image}
-                            alt={targetPokemon.name}
-                            className="w-full h-full object-contain"
+                    <div className="relative">
+                        <motion.div
+                            className="w-28 h-28 sm:w-36 sm:h-36 mx-auto mb-4 sm:mb-5 relative z-10"
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.2, duration: 0.5 }}
+                            whileHover={{ scale: 1.1, rotate: [0, 5, -5, 0] }}
+                        >
+                            <img
+                                src={targetPokemon.image}
+                                alt={targetPokemon.name}
+                                className="w-full h-full object-contain drop-shadow-lg"
+                            />
+                        </motion.div>
+                        <motion.div
+                            className={`absolute inset-0 rounded-full ${
+                                isDark ? "bg-gray-700/30" : "bg-gray-100/50"
+                            } blur-xl -z-0`}
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1.2, opacity: 0.7 }}
+                            transition={{ delay: 0.3, duration: 0.7 }}
                         />
-                    </motion.div>
+                    </div>
                     <motion.p
-                        className="text-xl sm:text-2xl font-bold text-blue-600 mb-3 sm:mb-4"
+                        className={`text-xl sm:text-2xl font-bold ${
+                            isDark ? "text-blue-400" : "text-blue-600"
+                        } mb-4 sm:mb-5`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.4 }}
                     >
-                        {capitalize(targetPokemon.name)}
+                        {capitalize(targetPokemon.name)}!
                     </motion.p>
-                    <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-5 sm:mb-6 text-xs sm:text-sm">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-5 sm:mb-6 text-xs sm:text-sm">
                         <motion.div
                             className={`${
                                 isDark ? "bg-gray-700" : "bg-gray-100"
-                            } rounded-lg p-2 text-left`}
+                            } rounded-full p-3 text-center shadow-sm ${
+                                isDark ? "shadow-black/20" : "shadow-gray-200"
+                            }`}
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.5 }}
                         >
-                            <span className="font-medium">Type:</span>{" "}
-                            {capitalize(targetPokemon.type1)}
-                            {targetPokemon.type2 !== "—"
-                                ? `/${capitalize(targetPokemon.type2)}`
-                                : ""}
+                            <span
+                                className={`font-medium ${
+                                    isDark ? "text-blue-300" : "text-blue-600"
+                                }`}
+                            >
+                                Type:
+                            </span>{" "}
+                            <span
+                                className={
+                                    isDark ? "text-gray-300" : "text-gray-700"
+                                }
+                            >
+                                {capitalize(targetPokemon.type1)}
+                                {targetPokemon.type2 !== "—"
+                                    ? `/${capitalize(targetPokemon.type2)}`
+                                    : ""}
+                            </span>
                         </motion.div>
                         <motion.div
                             className={`${
                                 isDark ? "bg-gray-700" : "bg-gray-100"
-                            } rounded-lg p-2 text-left`}
+                            } rounded-full p-3 text-center shadow-sm ${
+                                isDark ? "shadow-black/20" : "shadow-gray-200"
+                            }`}
                             initial={{ x: 20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.5 }}
                         >
-                            <span className="font-medium">Generation:</span>{" "}
-                            {targetPokemon.generation}
+                            <span
+                                className={`font-medium ${
+                                    isDark ? "text-blue-300" : "text-blue-600"
+                                }`}
+                            >
+                                Gen:
+                            </span>{" "}
+                            <span
+                                className={
+                                    isDark ? "text-gray-300" : "text-gray-700"
+                                }
+                            >
+                                {targetPokemon.generation}
+                            </span>
                         </motion.div>
                         <motion.div
                             className={`${
                                 isDark ? "bg-gray-700" : "bg-gray-100"
-                            } rounded-lg p-2 text-left`}
+                            } rounded-full p-3 text-center shadow-sm ${
+                                isDark ? "shadow-black/20" : "shadow-gray-200"
+                            }`}
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.6 }}
                         >
-                            <span className="font-medium">Color:</span>{" "}
-                            {capitalize(targetPokemon.color)}
+                            <span
+                                className={`font-medium ${
+                                    isDark ? "text-blue-300" : "text-blue-600"
+                                }`}
+                            >
+                                Color:
+                            </span>{" "}
+                            <span
+                                className={
+                                    isDark ? "text-gray-300" : "text-gray-700"
+                                }
+                            >
+                                {capitalize(targetPokemon.color)}
+                            </span>
                         </motion.div>
                         <motion.div
                             className={`${
                                 isDark ? "bg-gray-700" : "bg-gray-100"
-                            } rounded-lg p-2 text-left`}
+                            } rounded-full p-3 text-center shadow-sm ${
+                                isDark ? "shadow-black/20" : "shadow-gray-200"
+                            }`}
                             initial={{ x: 20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.6 }}
                         >
-                            <span className="font-medium">Habitat:</span>{" "}
-                            {capitalize(targetPokemon.habitat)}
+                            <span
+                                className={`font-medium ${
+                                    isDark ? "text-blue-300" : "text-blue-600"
+                                }`}
+                            >
+                                Habitat:
+                            </span>{" "}
+                            <span
+                                className={
+                                    isDark ? "text-gray-300" : "text-gray-700"
+                                }
+                            >
+                                {capitalize(targetPokemon.habitat)}
+                            </span>
                         </motion.div>
                     </div>
                     <div className="flex gap-3 sm:gap-4">
@@ -125,9 +190,9 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                             onClick={onClose}
                             className={`flex-1 ${
                                 isDark
-                                    ? "bg-gray-700 hover:bg-gray-600 text-gray-200"
-                                    : "bg-gray-200 hover:bg-gray-300 text-gray-800"
-                            } py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg transition-colors text-sm sm:text-base`}
+                                    ? "bg-gray-700 hover:bg-gray-600 text-gray-200 border-gray-600"
+                                    : "bg-gray-200 hover:bg-gray-300 text-gray-800 border-gray-300"
+                            } py-2.5 sm:py-3 px-4 sm:px-5 rounded-full transition-colors text-sm sm:text-base border font-medium shadow-sm`}
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.97 }}
                         >
@@ -135,7 +200,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                         </motion.button>
                         <motion.button
                             onClick={onNewGame}
-                            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg transition-colors text-sm sm:text-base"
+                            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2.5 sm:py-3 px-4 sm:px-5 rounded-full transition-colors text-sm sm:text-base font-medium shadow-md"
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.97 }}
                         >
@@ -144,7 +209,7 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                     </div>
                 </div>
             </motion.div>
-        </motion.div>
+        </div>
     );
 };
 
