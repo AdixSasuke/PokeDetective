@@ -27,7 +27,9 @@ const CongratulationsModal = ({ targetPokemon, onNewGame, onClose, theme }) => {
                 className={`${
                     isDark ? "bg-gray-900" : "bg-white"
                 } rounded-xl p-4 sm:p-6 max-w-md w-full mx-auto shadow-2xl border ${
-                    isDark ? "border-green-700" : "border-green-200"
+                    isDark
+                        ? "border-2 border-green-600"
+                        : "border-2 border-green-500"
                 }`}
                 variants={modalVariants}
                 initial="hidden"

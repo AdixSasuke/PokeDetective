@@ -1,6 +1,7 @@
 import { useEffect, useState, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getPokemonId } from "../../utils/pokemonUtils";
+import { capitalize } from "../../utils/stringUtils";
 
 const GuessInput = memo(
     ({ guess, onChange, onSelect, filteredPokemon, disabled, theme }) => {
@@ -37,7 +38,10 @@ const GuessInput = memo(
                     <motion.input
                         type="text"
                         value={guess}
-                        onChange={onChange}
+                        onChange={(e) => {
+                            // Preserve capitalization in the input field
+                            onChange(e);
+                        }}
                         className="w-full p-2.5 sm:p-3 md:p-4 rounded-full border-2 border-gray-200 focus:border-red-400 focus:outline-none transition-all text-sm sm:text-base shadow-sm pl-4 sm:pl-5 pr-10 sm:pr-12 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                         placeholder="Who's that Pokémon...?"
                         disabled={disabled}
@@ -101,12 +105,7 @@ const GuessInput = memo(
                                             ? "border-gray-700"
                                             : "border-gray-100"
                                     } last:border-b-0`}
-                                    onClick={() =>
-                                        onSelect(
-                                            name.charAt(0).toUpperCase() +
-                                                name.slice(1)
-                                        )
-                                    }
+                                    onClick={() => onSelect(capitalize(name))}
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.05 }}

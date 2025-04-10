@@ -158,13 +158,17 @@ const usePokeGame = () => {
 
     const handleInputChange = useCallback(
         (e) => {
-            const val = e.target.value.toLowerCase();
-            setGuess(val);
-            if (val.length === 0) {
+            const inputValue = e.target.value;
+            const lowerCaseValue = inputValue.toLowerCase();
+
+            // Set the display value as-is (preserving case)
+            setGuess(inputValue);
+
+            if (lowerCaseValue.length === 0) {
                 setFilteredPokemon([]);
             } else {
                 const filtered = allPokemon
-                    .filter((p) => p.startsWith(val))
+                    .filter((p) => p.startsWith(lowerCaseValue))
                     .slice(0, 8);
                 setFilteredPokemon(filtered);
             }

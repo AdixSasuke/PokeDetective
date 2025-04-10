@@ -32,7 +32,9 @@ const GiveUpModal = ({ targetPokemon, onClose, onNewGame, theme }) => {
                 className={`${
                     isDark ? "bg-gray-900" : "bg-white"
                 } rounded-xl p-4 sm:p-6 max-w-md w-full mx-auto shadow-2xl border ${
-                    isDark ? "border-red-700" : "border-red-200"
+                    isDark
+                        ? "border-2 border-red-600"
+                        : "border-2 border-red-500"
                 }`}
                 variants={modalVariants}
                 initial="hidden"
