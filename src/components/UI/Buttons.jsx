@@ -1,12 +1,28 @@
 import { memo } from "react";
+import { motion } from "framer-motion";
+
+// Button animation variants
+const buttonVariants = {
+    hover: (disabled) => ({
+        scale: disabled ? 1 : 1.03,
+    }),
+    tap: (disabled) => ({
+        scale: disabled ? 1 : 0.97,
+    }),
+};
 
 export const GuessButton = memo(({ onClick, disabled }) => (
-    <button
+    <motion.button
         onClick={onClick}
         className={`flex items-center justify-center gap-1 sm:gap-2 bg-red-500 hover:bg-red-600 text-white font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-full transition-colors w-full text-sm sm:text-base ${
             disabled ? "opacity-50 cursor-not-allowed" : ""
         }`}
         disabled={disabled}
+        variants={buttonVariants}
+        custom={disabled}
+        whileHover="hover"
+        whileTap="tap"
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,11 +33,11 @@ export const GuessButton = memo(({ onClick, disabled }) => (
             <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
         </svg>
         Catch 'em!
-    </button>
+    </motion.button>
 ));
 
 export const HintButton = memo(({ onClick, hintsLeft }) => (
-    <button
+    <motion.button
         onClick={onClick}
         disabled={hintsLeft <= 0}
         className={`flex items-center justify-center gap-1 sm:gap-2 font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-full transition-colors w-full text-sm sm:text-base ${
@@ -29,6 +45,11 @@ export const HintButton = memo(({ onClick, hintsLeft }) => (
                 ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
                 : "bg-gray-200 text-gray-500 cursor-not-allowed"
         }`}
+        variants={buttonVariants}
+        custom={hintsLeft <= 0}
+        whileHover="hover"
+        whileTap="tap"
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -43,22 +64,28 @@ export const HintButton = memo(({ onClick, hintsLeft }) => (
             />
         </svg>
         {hintsLeft > 0 ? `${hintsLeft} Hints` : "No Hints"}
-    </button>
+    </motion.button>
 ));
 
 export const ResetButton = memo(({ onClick }) => (
-    <button
+    <motion.button
         onClick={onClick}
         className="mt-4 sm:mt-6 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 sm:py-3 px-5 sm:px-6 rounded-full transition-colors mx-auto block text-sm sm:text-base"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
         New Battle
-    </button>
+    </motion.button>
 ));
 
 export const GiveUpButton = memo(({ onClick }) => (
-    <button
+    <motion.button
         onClick={onClick}
         className="flex items-center justify-center gap-1 sm:gap-2 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2.5 sm:py-3 px-5 sm:px-6 rounded-full transition-colors w-full mx-auto text-sm sm:text-base"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -73,5 +100,5 @@ export const GiveUpButton = memo(({ onClick }) => (
             />
         </svg>
         Give Up
-    </button>
+    </motion.button>
 ));

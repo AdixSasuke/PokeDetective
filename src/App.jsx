@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import GuessInput from "./components/UI/GuessInput";
 import {
     GuessButton,
@@ -14,6 +15,31 @@ import GiveUpModal from "./components/Modals/GiveUpModal";
 import ThemeToggle from "./components/UI/ThemeToggle";
 import usePokeGame from "./hooks/usePokeGame";
 import useDarkMode from "./hooks/useDarkMode";
+
+// Animation variants
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            when: "beforeChildren",
+            staggerChildren: 0.2,
+        },
+    },
+};
+
+const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            type: "spring",
+            stiffness: 300,
+            damping: 24,
+        },
+    },
+};
 
 const App = () => {
     const { theme, toggleTheme } = useDarkMode();
@@ -45,8 +71,11 @@ const App = () => {
             } transition-colors duration-200`}
         >
             <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-            <div
+            <motion.div
                 className="max-w-3xl mx-auto flex-grow w-full"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
                 style={{
                     backgroundImage:
                         theme === "dark"
@@ -55,10 +84,19 @@ const App = () => {
                     backgroundSize: "150px 150px",
                 }}
             >
-                <div className="flex flex-col items-center mb-6 sm:mb-8">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 mb-2">
+                <motion.div
+                    className="flex flex-col items-center mb-6 sm:mb-8"
+                    variants={itemVariants}
+                >
+                    <motion.div
+                        className="w-10 h-10 sm:w-12 sm:h-12 mb-2"
+                        whileHover={{
+                            rotate: 360,
+                            transition: { duration: 0.6 },
+                        }}
+                    >
                         <img src="https://www.pikpng.com/pngl/b/494-4945371_pokeball-sprite-png.png" />
-                    </div>
+                    </motion.div>
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-1 sm:mb-2">
                         <span className="text-red-500">Poké</span>
                         <span
@@ -79,9 +117,12 @@ const App = () => {
                         Guess the hidden Pokémon! Compare stats to find the
                         answer.
                     </p>
-                </div>
+                </motion.div>
 
-                <div className="flex flex-col items-center space-y-4 sm:space-y-5 max-w-md mx-auto px-2 sm:px-0">
+                <motion.div
+                    className="flex flex-col items-center space-y-4 sm:space-y-5 max-w-md mx-auto px-2 sm:px-0"
+                    variants={itemVariants}
+                >
                     <GuessInput
                         guess={guess}
                         onChange={handleInputChange}
@@ -92,78 +133,148 @@ const App = () => {
                     />
 
                     <div className="w-full grid grid-cols-2 gap-2 sm:gap-4">
-                        <GuessButton
-                            onClick={handleGuess}
-                            disabled={hasGivenUp || win}
-                        />
-                        <HintButton
-                            onClick={handleHint}
-                            hintsLeft={hintsLeft}
-                        />
+                        <motion.div whileTap={{ scale: 0.95 }}>
+                            <GuessButton
+                                onClick={handleGuess}
+                                disabled={hasGivenUp || win}
+                            />
+                        </motion.div>
+                        <motion.div whileTap={{ scale: 0.95 }}>
+                            <HintButton
+                                onClick={handleHint}
+                                hintsLeft={hintsLeft}
+                            />
+                        </motion.div>
                     </div>
 
-                    <HintsList hints={hints} />
-                </div>
+                    <AnimatePresence>
+                        {hints.length > 0 && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="w-full"
+                            >
+                                <HintsList hints={hints} theme={theme} />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </motion.div>
 
-                <GuessTable
-                    guesses={[...guesses].reverse()}
-                    targetPokemon={targetPokemon}
-                    theme={theme}
-                />
+                <AnimatePresence>
+                    {guesses.length > 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <GuessTable
+                                guesses={[...guesses].reverse()}
+                                targetPokemon={targetPokemon}
+                                theme={theme}
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {targetPokemon && !win && guesses.length > 0 && (
-                    <div className="max-w-md mx-auto mt-5 sm:mt-6 px-2 sm:px-0">
-                        <GiveUpButton onClick={handleGiveUp} />
-                    </div>
+                    <motion.div
+                        className="max-w-md mx-auto mt-5 sm:mt-6 px-2 sm:px-0"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                    >
+                        <motion.div whileTap={{ scale: 0.95 }}>
+                            <GiveUpButton onClick={handleGiveUp} />
+                        </motion.div>
+                    </motion.div>
                 )}
 
-                {win && (
-                    <>
-                        <div
-                            className={`mt-5 sm:mt-6 text-base sm:text-xl font-bold text-center px-3 py-3 ${
-                                theme === "dark"
-                                    ? "bg-green-900 border-green-700"
-                                    : "bg-green-100 border-green-300"
-                            } border rounded-xl mx-2 sm:mx-4`}
+                <AnimatePresence>
+                    {win && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.5 }}
                         >
-                            <span
-                                className={
+                            <motion.div
+                                className={`mt-5 sm:mt-6 text-base sm:text-xl font-bold text-center px-3 py-3 ${
                                     theme === "dark"
-                                        ? "text-green-400"
-                                        : "text-green-600"
-                                }
+                                        ? "bg-green-900 border-green-700"
+                                        : "bg-green-100 border-green-300"
+                                } border rounded-xl mx-2 sm:mx-4`}
+                                animate={{
+                                    boxShadow: [
+                                        "0px 0px 0px rgba(0,200,0,0)",
+                                        "0px 0px 20px rgba(0,200,0,0.3)",
+                                        "0px 0px 0px rgba(0,200,0,0)",
+                                    ],
+                                }}
+                                transition={{
+                                    repeat: 3,
+                                    duration: 1.5,
+                                }}
                             >
-                                Congratulations!
-                            </span>{" "}
-                            You caught{" "}
-                            <span
-                                className={
-                                    theme === "dark"
-                                        ? "text-blue-400"
-                                        : "text-blue-600"
-                                }
+                                <span
+                                    className={
+                                        theme === "dark"
+                                            ? "text-green-400"
+                                            : "text-green-600"
+                                    }
+                                >
+                                    Congratulations!
+                                </span>{" "}
+                                You caught{" "}
+                                <span
+                                    className={
+                                        theme === "dark"
+                                            ? "text-blue-400"
+                                            : "text-blue-600"
+                                    }
+                                >
+                                    {targetPokemon.name.toUpperCase()}!
+                                </span>
+                            </motion.div>
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="flex justify-center mt-4"
                             >
-                                {targetPokemon.name.toUpperCase()}!
-                            </span>
-                        </div>
-                        <ResetButton onClick={handleReset} />
-                    </>
-                )}
+                                <ResetButton onClick={handleReset} />
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-                {showGiveUpModal && targetPokemon && (
-                    <GiveUpModal
-                        targetPokemon={targetPokemon}
-                        onClose={closeModal}
-                        onNewGame={() => {
-                            closeModal();
-                            handleReset();
-                        }}
-                        theme={theme}
-                    />
-                )}
-            </div>
+                <AnimatePresence>
+                    {showGiveUpModal && targetPokemon && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            <GiveUpModal
+                                targetPokemon={targetPokemon}
+                                onClose={closeModal}
+                                onNewGame={() => {
+                                    closeModal();
+                                    handleReset();
+                                }}
+                                theme={theme}
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.div>
 
-            <footer className="mt-6 py-4 text-center">
+            <motion.footer
+                className="mt-6 py-4 text-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+            >
                 <a
                     href="https://github.com/AdixSasuke/PokeDetective"
                     target="_blank"
@@ -186,7 +297,7 @@ const App = () => {
                     </svg>
                     <span className="text-sm">GitHub</span>
                 </a>
-            </footer>
+            </motion.footer>
         </div>
     );
 };
