@@ -11,16 +11,25 @@ const attributes = [
     "habitat",
 ];
 
-const GuessTable = ({ guesses, targetPokemon }) => {
+const GuessTable = ({ guesses, targetPokemon, theme }) => {
     if (!guesses || guesses.length === 0) return null;
 
     // For mobile view, we'll use a different layout
     const isMobile = window.innerWidth < 768;
+    const isDark = theme === "dark";
 
     return (
-        <div className="w-full bg-white border border-gray-200 rounded-xl shadow-sm mt-6 sm:mt-8 overflow-hidden mx-auto px-1 sm:px-0">
+        <div
+            className={`w-full ${isDark ? "bg-gray-800" : "bg-white"} border ${
+                isDark ? "border-gray-700" : "border-gray-200"
+            } rounded-xl shadow-sm mt-6 sm:mt-8 overflow-hidden mx-auto px-1 sm:px-0`}
+        >
             {/* Desktop view - full table */}
-            <div className="hidden md:grid grid-cols-7 gap-px bg-gray-100">
+            <div
+                className={`hidden md:grid grid-cols-7 gap-px ${
+                    isDark ? "bg-gray-700" : "bg-gray-100"
+                }`}
+            >
                 {[
                     "Image",
                     "Name",
@@ -103,7 +112,9 @@ const GuessTable = ({ guesses, targetPokemon }) => {
                     return (
                         <div
                             key={idx}
-                            className="border-b border-gray-200 last:border-b-0 p-3"
+                            className={`border-b ${
+                                isDark ? "border-gray-700" : "border-gray-200"
+                            } last:border-b-0 p-3`}
                         >
                             <div className="flex items-center gap-3 mb-2">
                                 <div
@@ -131,10 +142,18 @@ const GuessTable = ({ guesses, targetPokemon }) => {
                                         targetPokemon &&
                                         g[attr] === targetPokemon[attr];
                                     const bgColor = isCorrect
-                                        ? "bg-green-100 border-green-300"
+                                        ? isDark
+                                            ? "bg-green-900 border-green-700"
+                                            : "bg-green-100 border-green-300"
+                                        : isDark
+                                        ? "bg-red-900 border-red-700"
                                         : "bg-red-100 border-red-300";
                                     const textColor = isCorrect
-                                        ? "text-green-700"
+                                        ? isDark
+                                            ? "text-green-400"
+                                            : "text-green-700"
+                                        : isDark
+                                        ? "text-red-400"
                                         : "text-red-700";
 
                                     if (attr === "image") return null;
@@ -151,7 +170,13 @@ const GuessTable = ({ guesses, targetPokemon }) => {
                                             key={`mobile-${idx}-${i}`}
                                             className={`${bgColor} ${textColor} border rounded-md p-2 flex flex-col`}
                                         >
-                                            <span className="text-xs text-gray-600">
+                                            <span
+                                                className={`text-xs ${
+                                                    isDark
+                                                        ? "text-gray-400"
+                                                        : "text-gray-600"
+                                                }`}
+                                            >
                                                 {label}
                                             </span>
                                             <span className="font-medium">
@@ -171,7 +196,11 @@ const GuessTable = ({ guesses, targetPokemon }) => {
                 })}
             </div>
 
-            <div className="text-center text-gray-500 py-2 sm:py-3 text-xs sm:text-sm">
+            <div
+                className={`text-center ${
+                    isDark ? "text-gray-400" : "text-gray-500"
+                } py-2 sm:py-3 text-xs sm:text-sm`}
+            >
                 {guesses.length} {guesses.length === 1 ? "guess" : "guesses"} so
                 far
             </div>

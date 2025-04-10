@@ -2,3 +2,23 @@
 * {
     font-family: poppins, sans-serif;
 }
+
+:root {
+    --background: #ffffff;
+    --text-primary: #333333;
+    --text-secondary: #6b7280;
+    --accent: #ff5a5f;
+}
+
+.dark {
+    --background: #1f2937;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --accent: #ff5a5f;
+}
+
+/* Base styles */
+.dark body {
+    @apply bg-gray-900;
+    color: var(--text-primary);
+}

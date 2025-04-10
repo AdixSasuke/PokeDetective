@@ -11,9 +11,12 @@ import {
 import HintsList from "./components/Hints/HintsList";
 import GuessTable from "./components/Guesses/GuessTable";
 import GiveUpModal from "./components/Modals/GiveUpModal";
+import ThemeToggle from "./components/UI/ThemeToggle";
 import usePokeGame from "./hooks/usePokeGame";
+import useDarkMode from "./hooks/useDarkMode";
 
 const App = () => {
+    const { theme, toggleTheme } = useDarkMode();
     const {
         targetPokemon,
         guess,
@@ -34,12 +37,21 @@ const App = () => {
     } = usePokeGame();
 
     return (
-        <div className="min-h-screen bg-white px-3 py-5 sm:px-4 sm:py-8 flex flex-col">
+        <div
+            className={`min-h-screen px-3 py-5 sm:px-4 sm:py-8 flex flex-col ${
+                theme === "dark"
+                    ? "bg-gray-900 text-white"
+                    : "bg-white text-gray-800"
+            } transition-colors duration-200`}
+        >
+            <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
             <div
                 className="max-w-3xl mx-auto flex-grow w-full"
                 style={{
                     backgroundImage:
-                        "url('data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='40' stroke='%23FF5A5F' strokeWidth='1' fill='none' strokeOpacity='0.1'/%3E%3C/svg%3E')",
+                        theme === "dark"
+                            ? "url('data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='40' stroke='%23FF5A5F' strokeWidth='1' fill='none' strokeOpacity='0.05'/%3E%3C/svg%3E')"
+                            : "url('data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='40' stroke='%23FF5A5F' strokeWidth='1' fill='none' strokeOpacity='0.1'/%3E%3C/svg%3E')",
                     backgroundSize: "150px 150px",
                 }}
             >
@@ -49,9 +61,21 @@ const App = () => {
                     </div>
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-1 sm:mb-2">
                         <span className="text-red-500">Poké</span>
-                        <span className="text-gray-800">Detective</span>
+                        <span
+                            className={
+                                theme === "dark"
+                                    ? "text-white"
+                                    : "text-gray-800"
+                            }
+                        >
+                            Detective
+                        </span>
                     </h1>
-                    <p className="text-sm sm:text-base text-gray-600 text-center max-w-lg px-2">
+                    <p
+                        className={`text-sm sm:text-base text-center max-w-lg px-2 ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-600"
+                        }`}
+                    >
                         Guess the hidden Pokémon! Compare stats to find the
                         answer.
                     </p>
@@ -64,6 +88,7 @@ const App = () => {
                         onSelect={handleSelect}
                         filteredPokemon={filteredPokemon}
                         disabled={hasGivenUp || win}
+                        theme={theme}
                     />
 
                     <div className="w-full grid grid-cols-2 gap-2 sm:gap-4">
@@ -83,6 +108,7 @@ const App = () => {
                 <GuessTable
                     guesses={[...guesses].reverse()}
                     targetPokemon={targetPokemon}
+                    theme={theme}
                 />
 
                 {targetPokemon && !win && guesses.length > 0 && (
@@ -93,12 +119,30 @@ const App = () => {
 
                 {win && (
                     <>
-                        <div className="mt-5 sm:mt-6 text-base sm:text-xl font-bold text-center px-3 py-3 bg-green-100 border border-green-300 rounded-xl mx-2 sm:mx-4">
-                            <span className="text-green-600">
+                        <div
+                            className={`mt-5 sm:mt-6 text-base sm:text-xl font-bold text-center px-3 py-3 ${
+                                theme === "dark"
+                                    ? "bg-green-900 border-green-700"
+                                    : "bg-green-100 border-green-300"
+                            } border rounded-xl mx-2 sm:mx-4`}
+                        >
+                            <span
+                                className={
+                                    theme === "dark"
+                                        ? "text-green-400"
+                                        : "text-green-600"
+                                }
+                            >
                                 Congratulations!
                             </span>{" "}
                             You caught{" "}
-                            <span className="text-blue-600">
+                            <span
+                                className={
+                                    theme === "dark"
+                                        ? "text-blue-400"
+                                        : "text-blue-600"
+                                }
+                            >
                                 {targetPokemon.name.toUpperCase()}!
                             </span>
                         </div>
@@ -114,6 +158,7 @@ const App = () => {
                             closeModal();
                             handleReset();
                         }}
+                        theme={theme}
                     />
                 )}
             </div>
@@ -123,7 +168,11 @@ const App = () => {
                     href="https://github.com/AdixSasuke/PokeDetective"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    className={`inline-flex items-center gap-2 ${
+                        theme === "dark"
+                            ? "text-gray-400 hover:text-gray-200"
+                            : "text-gray-600 hover:text-gray-900"
+                    } transition-colors`}
                     aria-label="GitHub repository"
                 >
                     <svg
