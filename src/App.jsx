@@ -225,8 +225,7 @@ const App = () => {
                                             : "text-gray-600"
                                     }`}
                                 >
-                                    Guess the hidden Pokémon! Compare stats to
-                                    find the answer.
+                                    Guess the hidden Pokémon!
                                 </p>
                             </motion.div>
 
