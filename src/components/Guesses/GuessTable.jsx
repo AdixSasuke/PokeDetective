@@ -21,7 +21,8 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
     const newestGuessIndex = 0;
 
     return (
-        <div className="w-full mt-6 sm:mt-8 mx-auto px-4">
+        <div className="w-full mt-6 sm:mt-8 mx-auto px-4" aria-live="polite">
+            <h2 className="sr-only">Your Pokémon Guesses</h2>
             {/* Desktop view - full table */}
             <div
                 className={`hidden md:block overflow-hidden rounded-lg ${
@@ -29,9 +30,11 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                 } shadow-lg border ${
                     isDark ? "border-gray-700" : "border-gray-200"
                 }`}
+                role="table"
+                aria-label="Pokémon guesses comparison table"
             >
                 {/* Header */}
-                <div className="grid grid-cols-7">
+                <div className="grid grid-cols-7" role="rowgroup">
                     {[
                         "Image",
                         "Name",
@@ -48,6 +51,7 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                     ? "bg-gray-800 text-gray-200"
                                     : "bg-gray-100 text-gray-700"
                             }`}
+                            role="columnheader"
                         >
                             {header}
                         </div>
@@ -56,7 +60,7 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
 
                 {/* Rows */}
                 <AnimatePresence>
-                    <div>
+                    <div role="rowgroup">
                         {guesses.map((guess, idx) => {
                             const isNewest = idx === newestGuessIndex;
                             const isCorrect =
@@ -84,6 +88,10 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                         damping: 25,
                                         duration: isNewest ? 0.5 : 0,
                                     }}
+                                    role="row"
+                                    aria-label={`Guess: ${capitalize(
+                                        guess.name
+                                    )}`}
                                 >
                                     {attributes.map((attr, i) => {
                                         if (attr === "image") {
@@ -95,6 +103,8 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                 <div
                                                     key={`${idx}-${i}`}
                                                     className={`flex items-center justify-center p-3 ${imageBgColor}`}
+                                                    role="cell"
+                                                    aria-label="Pokémon image"
                                                 >
                                                     <motion.div
                                                         className="bg-white rounded-lg w-16 h-16 flex items-center justify-center shadow-md"
@@ -119,8 +129,10 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                                     .front_default ||
                                                                 "/placeholder.svg"
                                                             }
-                                                            alt={guess.name}
-                                                            className="w-14 h-14 object-contain pokemon-image"
+                                                            alt={`${capitalize(
+                                                                guess.name
+                                                            )} sprite`}
+                                                            className="w-16 h-16 object-contain pokemon-image"
                                                             initial={
                                                                 isNewest
                                                                     ? {
@@ -155,6 +167,14 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                             ? "bg-green-500 text-white"
                                             : "bg-red-500 text-white";
 
+                                        // Get readable attribute name
+                                        const attrName =
+                                            attr === "type1"
+                                                ? "Type 1"
+                                                : attr === "type2"
+                                                ? "Type 2"
+                                                : capitalize(attr);
+
                                         return (
                                             <motion.div
                                                 key={`${idx}-${i}`}
@@ -170,6 +190,14 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                         ? 0.1 + i * 0.05
                                                         : 0,
                                                 }}
+                                                role="cell"
+                                                aria-label={`${attrName}: ${capitalize(
+                                                    guess[attr] || "—"
+                                                )}`}
+                                                aria-live={
+                                                    isNewest ? "polite" : "off"
+                                                }
+                                                aria-atomic="true"
                                             >
                                                 {attr === "type1" ||
                                                 attr === "type2" ||
@@ -212,6 +240,10 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                 damping: 25,
                             }}
                             layout
+                            role="article"
+                            aria-label={`Latest guess: ${capitalize(
+                                guesses[0].name
+                            )}`}
                         >
                             {/* Header */}
                             <div
@@ -221,6 +253,8 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                         ? "bg-green-500"
                                         : "bg-red-500"
                                 } text-white`}
+                                role="heading"
+                                aria-level="3"
                             >
                                 <motion.div
                                     className="bg-white rounded-lg p-1 shadow-md"
@@ -245,7 +279,9 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                     .front_default ||
                                                 "/placeholder.svg"
                                             }
-                                            alt={guesses[0].name}
+                                            alt={`${capitalize(
+                                                guesses[0].name
+                                            )} sprite`}
                                             className="w-10 h-10 object-contain"
                                             initial={{ rotate: -8, scale: 0.8 }}
                                             animate={{ rotate: 0, scale: 1 }}
@@ -267,7 +303,11 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                             </div>
 
                             {/* Details */}
-                            <div className="grid grid-cols-2 gap-2 p-4">
+                            <div
+                                className="grid grid-cols-2 gap-2 p-4"
+                                role="list"
+                                aria-label="Pokémon attributes"
+                            >
                                 {attributes.slice(2).map((attr, i) => {
                                     const attrMatches =
                                         targetPokemon &&
@@ -296,6 +336,10 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                             transition={{
                                                 delay: 0.1 + i * 0.05,
                                             }}
+                                            role="listitem"
+                                            aria-label={`${label}: ${capitalize(
+                                                guesses[0][attr] || "—"
+                                            )}`}
                                         >
                                             <span className="text-xs text-white/80">
                                                 {label}
@@ -332,12 +376,18 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                             className={`rounded-lg overflow-hidden ${
                                 isDark ? "bg-gray-800" : "bg-white"
                             } border-2 ${cardBorderColor} shadow-md`}
+                            role="article"
+                            aria-label={`Previous guess: ${capitalize(
+                                guess.name
+                            )}`}
                         >
                             {/* Header */}
                             <div
                                 className={`flex items-center gap-3 p-4 ${
                                     isCorrect ? "bg-green-500" : "bg-red-500"
                                 } text-white`}
+                                role="heading"
+                                aria-level="3"
                             >
                                 <div className="bg-white rounded-lg p-1 shadow-md">
                                     <div className="rounded-lg w-12 h-12 flex items-center justify-center">
@@ -346,7 +396,9 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                 guess.sprites.front_default ||
                                                 "/placeholder.svg"
                                             }
-                                            alt={guess.name}
+                                            alt={`${capitalize(
+                                                guess.name
+                                            )} sprite`}
                                             className="w-10 h-10 object-contain"
                                         />
                                     </div>
@@ -357,7 +409,11 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                             </div>
 
                             {/* Details */}
-                            <div className="grid grid-cols-2 gap-2 p-4">
+                            <div
+                                className="grid grid-cols-2 gap-2 p-4"
+                                role="list"
+                                aria-label="Pokémon attributes"
+                            >
                                 {attributes.slice(2).map((attr, i) => {
                                     const attrMatches =
                                         targetPokemon &&
@@ -380,6 +436,10 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                         <div
                                             key={`mobile-static-${idx}-${i}`}
                                             className={`${bgColor} ${textColor} rounded-lg p-3 flex flex-col`}
+                                            role="listitem"
+                                            aria-label={`${label}: ${capitalize(
+                                                guess[attr] || "—"
+                                            )}`}
                                         >
                                             <span className="text-xs text-white/80">
                                                 {label}

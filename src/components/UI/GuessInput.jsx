@@ -34,9 +34,13 @@ const GuessInput = memo(
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
             >
+                <label htmlFor="pokemon-guess" className="sr-only">
+                    Enter Pokémon name
+                </label>
                 <div className="relative">
                     <motion.input
                         type="text"
+                        id="pokemon-guess"
                         value={guess}
                         onChange={(e) => {
                             // Preserve capitalization in the input field
@@ -45,6 +49,15 @@ const GuessInput = memo(
                         className="w-full p-2.5 sm:p-3 md:p-4 rounded-full border-2 border-gray-200 focus:border-red-400 focus:outline-none transition-all text-sm sm:text-base shadow-sm pl-4 sm:pl-5 pr-10 sm:pr-12 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                         placeholder="Who's that Pokémon...?"
                         disabled={disabled}
+                        autoComplete="off"
+                        aria-label="Enter Pokémon name to guess"
+                        aria-autocomplete="list"
+                        aria-controls={
+                            filteredPokemon.length > 0
+                                ? "pokemon-suggestions"
+                                : undefined
+                        }
+                        aria-expanded={filteredPokemon.length > 0}
                         whileFocus={{ scale: 1.01 }}
                         transition={{ type: "spring", stiffness: 300 }}
                     />
@@ -59,6 +72,7 @@ const GuessInput = memo(
                             repeat: Infinity,
                             repeatDelay: 1,
                         }}
+                        aria-hidden="true"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -79,11 +93,14 @@ const GuessInput = memo(
                 <AnimatePresence>
                     {filteredPokemon.length > 0 && (
                         <motion.ul
+                            id="pokemon-suggestions"
                             className="absolute z-10 w-full border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-40 sm:max-h-48 overflow-y-auto mt-1"
                             initial={{ opacity: 0, y: -10, height: 0 }}
                             animate={{ opacity: 1, y: 0, height: "auto" }}
                             exit={{ opacity: 0, y: -10, height: 0 }}
                             transition={{ duration: 0.2 }}
+                            role="listbox"
+                            aria-label="Pokémon suggestions"
                         >
                             {filteredPokemon.map((name, i) => (
                                 <motion.li
@@ -114,6 +131,14 @@ const GuessInput = memo(
                                             ? "#374151"
                                             : "#f3f4f6",
                                     }}
+                                    role="option"
+                                    aria-selected={name === guess.toLowerCase()}
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            onSelect(capitalize(name));
+                                        }
+                                    }}
                                 >
                                     {pokemonImages[name] && (
                                         <motion.img
@@ -121,8 +146,8 @@ const GuessInput = memo(
                                                 pokemonImages[name] ||
                                                 "/placeholder.svg"
                                             }
-                                            alt={name}
-                                            className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+                                            alt={`${name} sprite`}
+                                            className="w-12 h-12 sm:w-15 sm:h-15 object-contain"
                                             initial={{ scale: 0.8, opacity: 0 }}
                                             animate={{ scale: 1, opacity: 1 }}
                                             transition={{
