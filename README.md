@@ -73,10 +73,6 @@ Contributions are welcome! Here's how you can help:
 4. Push to the branch (`git push origin feature/awesome-feature`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
 ## 🙏 Acknowledgments
 
 -   [PokéAPI](https://pokeapi.co/) for providing the Pokémon data
