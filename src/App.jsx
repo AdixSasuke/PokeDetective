@@ -123,6 +123,7 @@ const LoadingScreen = ({ theme }) => {
 const App = () => {
     const [loading, setLoading] = useState(true);
     const { theme, toggleTheme } = useDarkMode();
+    const [rotate, setRotate] = useState(0);
     const {
         targetPokemon,
         guess,
@@ -234,26 +235,17 @@ const App = () => {
                                             stiffness: 260,
                                             damping: 20,
                                             duration: 0.8,
-                                            delay: 0.5, // Adding a 0.5s delay before animation starts
+                                            delay: 0.5,
                                         }}
-                                        whileHover={{
-                                            rotate: [0, 15, -15, 0],
-                                            scale: 1.1,
-                                            transition: {
-                                                rotate: {
-                                                    duration: 0.6,
-                                                    ease: "easeInOut",
-                                                },
-                                                scale: {
-                                                    duration: 0.3,
-                                                    ease: "easeOut",
-                                                },
-                                            },
+                                        onHoverStart={() => {
+                                            setRotate((prev) => prev + 360);
                                         }}
                                     >
-                                        <img
+                                        <motion.img
                                             src="/pokebola.png"
                                             alt="Pokéball"
+                                            animate={{ rotate }}
+                                            transition={{ duration: 0.6 }}
                                         />
                                     </motion.div>
                                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-1 sm:mb-2">
