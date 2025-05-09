@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { toRgbColor } from "../../utils/colorUtils";
 
 const LoadingIndicator = ({ theme, message = "Catching Pokémon..." }) => {
     return (

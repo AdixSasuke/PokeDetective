@@ -1,6 +1,6 @@
-// filepath: c:\Users\chhav\OneDrive\Desktop\Code\React\PokeDetective\src\components\GuessTable\PokemonImage.jsx
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { toRgbColor } from "../../utils/colorUtils";
 
 // Optimized component for displaying Pokémon images
 const PokemonImage = ({ src, name, size = "md", className = "" }) => {

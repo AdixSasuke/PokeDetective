@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { capitalize } from "../../utils/stringUtils";
+import { toRgbColor } from "../../utils/colorUtils";
 
 const UniversalModal = ({
     targetPokemon,

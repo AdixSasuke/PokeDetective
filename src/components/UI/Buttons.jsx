@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
+import { toRgbColor } from "../../utils/colorUtils";
 
 // Button animation variants
 const buttonVariants = {

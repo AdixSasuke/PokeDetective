@@ -16,6 +16,7 @@ import ThemeToggle from "./components/UI/ThemeToggle";
 import LoadingIndicator from "./components/UI/LoadingIndicator";
 import usePokeGame from "./hooks/usePokeGame";
 import useDarkMode from "./hooks/useDarkMode";
+import { toRgbColor } from "./utils/colorUtils";
 import "./animations.css";
 import { Helmet } from "react-helmet-async";
 

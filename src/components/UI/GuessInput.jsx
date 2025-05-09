@@ -5,6 +5,7 @@ import {
     getPokemonImageUrl,
 } from "../../utils/pokemonImageUtils";
 import { capitalize } from "../../utils/stringUtils";
+import { toRgbColor } from "../../utils/colorUtils";
 import PokemonImage from "./PokemonImage";
 
 const GuessInput = memo(
@@ -123,16 +124,21 @@ const GuessInput = memo(
                                     style={
                                         !isDark
                                             ? {
-                                                  backgroundColor: "white",
-                                                  color: "black",
+                                                  backgroundColor:
+                                                      toRgbColor(
+                                                          "rgb(255, 255, 255)"
+                                                      ),
+                                                  color: toRgbColor(
+                                                      "rgb(0, 0, 0)"
+                                                  ),
                                               }
                                             : undefined
                                     }
                                     className={`px-3 sm:px-4 py-2 sm:py-3 ${
                                         isDark
-                                            ? "bg-gray-800 text-gray-200 hover:bg-gray-700"
-                                            : "hover:bg-gray-100"
-                                    } cursor-pointer transition-colors text-sm sm:text-base flex items-center gap-2 sm:gap-3 border-b ${
+                                            ? "bg-gray-800 text-gray-200"
+                                            : ""
+                                    } cursor-pointer text-sm sm:text-base flex items-center gap-2 sm:gap-3 border-b ${
                                         isDark
                                             ? "border-gray-700"
                                             : "border-gray-100"
@@ -142,9 +148,11 @@ const GuessInput = memo(
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.05 }}
                                     whileHover={{
-                                        backgroundColor: isDark
-                                            ? "#374151"
-                                            : "#f3f4f6",
+                                        backgroundColor: toRgbColor(
+                                            isDark
+                                                ? "rgb(55, 65, 81)"
+                                                : "rgb(243, 244, 246)"
+                                        ),
                                     }}
                                     role="option"
                                     aria-selected={name === guess.toLowerCase()}

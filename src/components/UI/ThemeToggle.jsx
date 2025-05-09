@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { toRgbColor } from "../../utils/colorUtils";
 
 const ThemeToggle = ({ theme, toggleTheme }) => {
     return (
