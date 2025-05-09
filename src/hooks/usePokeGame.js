@@ -1,8 +1,18 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
 import fetchPokemonData from "../components/fetchRandomPokemon";
 import { attributes } from "../utils/pokemonUtils";
 import { capitalize } from "../utils/stringUtils";
+import { preloadPokemonImages, pokemonCache } from "../utils/pokemonImageUtils";
+
+// Debounce function to limit search API calls
+const debounce = (func, wait) => {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+};
 
 const usePokeGame = () => {
     const [targetPokemon, setTargetPokemon] = useState(null);
@@ -16,25 +26,50 @@ const usePokeGame = () => {
     const [showGiveUpModal, setShowGiveUpModal] = useState(false);
     const [hasGivenUp, setHasGivenUp] = useState(false);
     const [showNewBattleButton, setShowNewBattleButton] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Preload common Pokémon images
+    useEffect(() => {
+        // Preload first 151 Pokémon images (Gen 1)
+        preloadPokemonImages(151);
+    }, []);
 
     useEffect(() => {
         const fetchTarget = async () => {
+            setIsLoading(true);
             try {
                 const id = Math.floor(Math.random() * 1010) + 1;
                 const pokemon = await fetchPokemonData(id);
-                setTargetPokemon(pokemon);
+
+                // Validate pokemon data has required properties before setting
+                if (pokemon && pokemon.name && pokemon.id) {
+                    setTargetPokemon(pokemon);
+                } else {
+                    console.error("Invalid target Pokemon data:", pokemon);
+                    // Try again with a different ID
+                    fetchTarget();
+                }
             } catch (error) {
                 console.error("Error fetching target Pokemon:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
-
         const fetchAllPokemonNames = async () => {
             try {
+                // Check if we already have this data cached
+                const cachedNames = pokemonCache.getSpecial("allNames");
+                if (cachedNames) {
+                    setAllPokemon(cachedNames);
+                    return;
+                }
                 const res = await axios.get(
                     "https://pokeapi.co/api/v2/pokemon?limit=1010"
                 );
                 const names = res.data.results.map((p) => p.name);
                 setAllPokemon(names);
+                // Cache the names for future use - special case for allNames
+                pokemonCache.setSpecial("allNames", names);
             } catch (error) {
                 console.error("Error fetching Pokemon names:", error);
             }
@@ -44,46 +79,101 @@ const usePokeGame = () => {
         fetchAllPokemonNames();
     }, []);
 
+    // Create a memoized and debounced filter function
+    const debouncedFilter = useMemo(
+        () =>
+            debounce((inputValue) => {
+                if (!inputValue) {
+                    setFilteredPokemon([]);
+                    return;
+                }
+                const lowerCaseValue = inputValue.toLowerCase();
+                // Filter Pokémon that START WITH the search term (not just contain it)
+                const filtered = allPokemon
+                    .filter((p) => p.startsWith(lowerCaseValue))
+                    .slice(0, 8);
+                setFilteredPokemon(filtered);
+            }, 300),
+        [allPokemon]
+    );
+
     const handleGuess = async () => {
         if (win || !guess.trim() || hasGivenUp) return;
 
-        const guessed = await fetchPokemonData(guess.trim().toLowerCase());
-        if (!guessed) {
-            alert("Invalid Pokémon name!");
-            return;
-        }
+        try {
+            const guessed = await fetchPokemonData(guess.trim().toLowerCase());
 
-        const isDuplicate = guesses.some((g) => g.name === guessed.name);
-        if (isDuplicate) {
-            alert("You've already guessed this Pokémon!");
+            if (!guessed) {
+                alert("Invalid Pokémon name!");
+                return;
+            } // Ensure guessed has required properties
+            if (!guessed || !guessed.name) {
+                console.error("Invalid Pokemon data - missing name:", guessed);
+                alert("Error fetching Pokémon data. Please try again.");
+                setGuess("");
+                return;
+            }
+
+            // Check if this exact Pokémon has been guessed already by comparing names
+            const isDuplicate = guesses.some(
+                (g) =>
+                    g &&
+                    g.name &&
+                    g.name.toLowerCase() === guessed.name.toLowerCase()
+            );
+            if (isDuplicate) {
+                alert("You've already guessed this Pokémon!");
+                setGuess("");
+                setFilteredPokemon([]);
+                return;
+            }
+
+            // Check if the guess matches the target Pokémon
+            const isCorrect =
+                targetPokemon &&
+                targetPokemon.name &&
+                guessed.name &&
+                guessed.name.toLowerCase() === targetPokemon.name.toLowerCase();
+            if (isCorrect) setWin(true);
+
+            // Ensure all required data is present before adding the guess
+            if (guessed && guessed.name && guessed.image) {
+                setGuesses((prevGuesses) => [...prevGuesses, guessed]);
+            } else {
+                console.error("Invalid Pokemon data for guess:", guessed);
+            }
             setGuess("");
             setFilteredPokemon([]);
-            return;
+        } catch (error) {
+            console.error("Error in handleGuess:", error);
+            alert("An error occurred. Please try again.");
+            setGuess("");
         }
-
-        const isCorrect = attributes.every(
-            (attr) => guessed[attr] === targetPokemon[attr]
-        );
-        if (isCorrect) setWin(true);
-
-        setGuesses([...guesses, guessed]);
-        setGuess("");
-        setFilteredPokemon([]);
     };
-
     const handleReset = useCallback(async () => {
         try {
             const id = Math.floor(Math.random() * 1010) + 1;
             const pokemon = await fetchPokemonData(id);
-            setTargetPokemon(pokemon);
-            setGuess("");
-            setGuesses([]);
-            setWin(false);
-            setFilteredPokemon([]);
-            setHints([]);
-            setHintsLeft(3);
-            setHasGivenUp(false);
-            setShowNewBattleButton(false);
+
+            // Validate pokemon data has required properties before setting
+            if (pokemon && pokemon.name && pokemon.id) {
+                setTargetPokemon(pokemon);
+                setGuess("");
+                setGuesses([]);
+                setWin(false);
+                setFilteredPokemon([]);
+                setHints([]);
+                setHintsLeft(3);
+                setHasGivenUp(false);
+                setShowNewBattleButton(false);
+            } else {
+                console.error(
+                    "Invalid target Pokemon data during reset:",
+                    pokemon
+                );
+                // Try the reset again
+                handleReset();
+            }
         } catch (error) {
             console.error("Error resetting game:", error);
         }
@@ -157,20 +247,10 @@ const usePokeGame = () => {
     const handleInputChange = useCallback(
         (e) => {
             const inputValue = e.target.value;
-            const lowerCaseValue = inputValue.toLowerCase();
-
             setGuess(inputValue);
-
-            if (lowerCaseValue.length === 0) {
-                setFilteredPokemon([]);
-            } else {
-                const filtered = allPokemon
-                    .filter((p) => p.startsWith(lowerCaseValue))
-                    .slice(0, 8);
-                setFilteredPokemon(filtered);
-            }
+            debouncedFilter(inputValue);
         },
-        [allPokemon]
+        [debouncedFilter]
     );
 
     const handleSelect = useCallback((name) => {
@@ -204,6 +284,7 @@ const usePokeGame = () => {
         showGiveUpModal,
         hasGivenUp,
         showNewBattleButton,
+        isLoading,
         handleGuess,
         handleReset,
         handleHint,

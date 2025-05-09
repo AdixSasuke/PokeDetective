@@ -1,5 +1,6 @@
 import { capitalize } from "../../utils/stringUtils";
 import { motion, AnimatePresence } from "framer-motion";
+import PokemonImage from "../UI/PokemonImage";
 import "../../animations.css";
 
 const attributes = [
@@ -15,9 +16,14 @@ const attributes = [
 const GuessTable = ({ guesses, targetPokemon, theme }) => {
     if (!guesses || guesses.length === 0) return null;
 
-    const isDark = theme === "dark";
+    // Filter out any invalid guesses
+    const validGuesses = guesses.filter(
+        (guess) => guess && typeof guess === "object" && guess.name
+    );
 
-    // Since the newest guess is at the top (index 0) because the array is reversed in App.jsx
+    if (validGuesses.length === 0) return null;
+
+    const isDark = theme === "dark"; // Since the newest guess is at the top (index 0) because the array is reversed in App.jsx
     const newestGuessIndex = 0;
 
     return (
@@ -56,16 +62,23 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                             {header}
                         </div>
                     ))}
-                </div>
-
+                </div>{" "}
                 {/* Rows */}
                 <AnimatePresence>
                     <div role="rowgroup">
-                        {guesses.map((guess, idx) => {
+                        {validGuesses.map((guess, idx) => {
+                            // Skip rendering if guess is invalid
+                            if (!guess || !guess.name) {
+                                return null;
+                            }
+
                             const isNewest = idx === newestGuessIndex;
                             const isCorrect =
                                 targetPokemon &&
-                                guess.name === targetPokemon.name;
+                                targetPokemon.name &&
+                                guess.name &&
+                                guess.name.toLowerCase() ===
+                                    targetPokemon.name.toLowerCase();
 
                             // Only apply entry animation to newest guess
                             const initialAnimation = isNewest
@@ -106,6 +119,7 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                     role="cell"
                                                     aria-label="Pokémon image"
                                                 >
+                                                    {" "}
                                                     <motion.div
                                                         className="bg-white rounded-lg w-16 h-16 flex items-center justify-center shadow-md"
                                                         initial={
@@ -123,46 +137,29 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                                 : 0,
                                                         }}
                                                     >
-                                                        <motion.img
+                                                        <PokemonImage
                                                             src={
-                                                                guess.sprites
-                                                                    .front_default ||
-                                                                "/placeholder.svg"
+                                                                guess.image ||
+                                                                `/placeholder.svg`
                                                             }
-                                                            alt={`${capitalize(
-                                                                guess.name
-                                                            )} sprite`}
-                                                            className="w-16 h-16 object-contain pokemon-image"
-                                                            initial={
-                                                                isNewest
-                                                                    ? {
-                                                                          rotate: -5,
-                                                                          scale: 0.8,
-                                                                      }
-                                                                    : {
-                                                                          rotate: 0,
-                                                                          scale: 1,
-                                                                      }
-                                                            }
-                                                            animate={{
-                                                                rotate: 0,
-                                                                scale: 1,
-                                                            }}
-                                                            transition={{
-                                                                delay: isNewest
-                                                                    ? 0.2
-                                                                    : 0,
-                                                            }}
+                                                            name={guess.name}
+                                                            size="lg"
+                                                            className="pokemon-image"
                                                         />
                                                     </motion.div>
                                                 </div>
                                             );
-                                        }
-
-                                        // Determine if this attribute matches with target
+                                        } // Determine if this attribute matches with target
                                         const attrMatches =
                                             targetPokemon &&
-                                            guess[attr] === targetPokemon[attr];
+                                            guess[attr] &&
+                                            targetPokemon[attr] &&
+                                            guess[attr]
+                                                .toString()
+                                                .toLowerCase() ===
+                                                targetPokemon[attr]
+                                                    .toString()
+                                                    .toLowerCase();
                                         const cellColor = attrMatches
                                             ? "bg-green-500 text-white"
                                             : "bg-red-500 text-white";
@@ -215,20 +212,22 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                         })}
                     </div>
                 </AnimatePresence>
-            </div>
-
+            </div>{" "}
             {/* Mobile view - stacked cards */}
             <div className="md:hidden space-y-4">
                 <AnimatePresence>
                     {/* Only render newest guess (index 0) with animation */}
-                    {guesses.length > 0 && (
+                    {validGuesses.length > 0 && (
                         <motion.div
-                            key={`newest-${guesses[0].name}`}
+                            key={`newest-${validGuesses[0].name}`}
                             className={`rounded-lg overflow-hidden ${
                                 isDark ? "bg-gray-800" : "bg-white"
                             } border-2 ${
                                 targetPokemon &&
-                                guesses[0].name === targetPokemon.name
+                                validGuesses[0].name &&
+                                targetPokemon.name &&
+                                validGuesses[0].name.toLowerCase() ===
+                                    targetPokemon.name.toLowerCase()
                                     ? "border-green-500"
                                     : "border-red-500"
                             } shadow-md new-guess`}
@@ -242,14 +241,17 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                             layout
                             role="article"
                             aria-label={`Latest guess: ${capitalize(
-                                guesses[0].name
+                                validGuesses[0].name
                             )}`}
                         >
                             {/* Header */}
                             <div
                                 className={`flex items-center gap-3 p-4 ${
                                     targetPokemon &&
-                                    guesses[0].name === targetPokemon.name
+                                    validGuesses[0].name &&
+                                    targetPokemon.name &&
+                                    validGuesses[0].name.toLowerCase() ===
+                                        targetPokemon.name.toLowerCase()
                                         ? "bg-green-500"
                                         : "bg-red-500"
                                 } text-white`}
@@ -273,22 +275,15 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                         animate={{ opacity: 1 }}
                                         transition={{ delay: 0.2 }}
                                     >
-                                        <motion.img
+                                        {" "}
+                                        <PokemonImage
                                             src={
-                                                guesses[0].sprites
-                                                    .front_default ||
-                                                "/placeholder.svg"
+                                                validGuesses[0].image ||
+                                                `/placeholder.svg`
                                             }
-                                            alt={`${capitalize(
-                                                guesses[0].name
-                                            )} sprite`}
+                                            name={validGuesses[0].name}
+                                            size="sm"
                                             className="w-10 h-10 object-contain"
-                                            initial={{ rotate: -8, scale: 0.8 }}
-                                            animate={{ rotate: 0, scale: 1 }}
-                                            transition={{
-                                                delay: 0.3,
-                                                type: "spring",
-                                            }}
                                         />
                                     </motion.div>
                                 </motion.div>
@@ -298,7 +293,7 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.2 }}
                                 >
-                                    {guesses[0].name}
+                                    {validGuesses[0].name}
                                 </motion.h3>
                             </div>
 
@@ -308,11 +303,18 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                 role="list"
                                 aria-label="Pokémon attributes"
                             >
+                                {" "}
                                 {attributes.slice(2).map((attr, i) => {
                                     const attrMatches =
                                         targetPokemon &&
-                                        guesses[0][attr] ===
-                                            targetPokemon[attr];
+                                        validGuesses[0][attr] &&
+                                        targetPokemon[attr] &&
+                                        validGuesses[0][attr]
+                                            .toString()
+                                            .toLowerCase() ===
+                                            targetPokemon[attr]
+                                                .toString()
+                                                .toLowerCase();
                                     const bgColor = attrMatches
                                         ? "bg-green-500"
                                         : "bg-red-500";
@@ -338,7 +340,7 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                             }}
                                             role="listitem"
                                             aria-label={`${label}: ${capitalize(
-                                                guesses[0][attr] || "—"
+                                                validGuesses[0][attr] || "—"
                                             )}`}
                                         >
                                             <span className="text-xs text-white/80">
@@ -350,9 +352,12 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                 attr === "color" ||
                                                 attr === "habitat"
                                                     ? capitalize(
-                                                          guesses[0][attr]
+                                                          validGuesses[0][
+                                                              attr
+                                                          ] || "—"
                                                       )
-                                                    : guesses[0][attr] || "—"}
+                                                    : validGuesses[0][attr] ||
+                                                      "—"}
                                             </span>
                                         </motion.div>
                                     );
@@ -360,12 +365,20 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                             </div>
                         </motion.div>
                     )}
-                </AnimatePresence>
-
+                </AnimatePresence>{" "}
                 {/* Render all other guesses without animation */}
-                {guesses.slice(1).map((guess, idx) => {
+                {validGuesses.slice(1).map((guess, idx) => {
+                    // Skip invalid guesses
+                    if (!guess || !guess.name) {
+                        return null;
+                    }
+
                     const isCorrect =
-                        targetPokemon && guess.name === targetPokemon.name;
+                        targetPokemon &&
+                        targetPokemon.name &&
+                        guess.name &&
+                        guess.name.toLowerCase() ===
+                            targetPokemon.name.toLowerCase();
                     const cardBorderColor = isCorrect
                         ? "border-green-500"
                         : "border-red-500";
@@ -390,15 +403,15 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                 aria-level="3"
                             >
                                 <div className="bg-white rounded-lg p-1 shadow-md">
+                                    {" "}
                                     <div className="rounded-lg w-12 h-12 flex items-center justify-center">
-                                        <img
+                                        <PokemonImage
                                             src={
-                                                guess.sprites.front_default ||
-                                                "/placeholder.svg"
+                                                guess.image ||
+                                                `/placeholder.svg`
                                             }
-                                            alt={`${capitalize(
-                                                guess.name
-                                            )} sprite`}
+                                            name={guess.name}
+                                            size="sm"
                                             className="w-10 h-10 object-contain"
                                         />
                                     </div>
@@ -417,7 +430,12 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                 {attributes.slice(2).map((attr, i) => {
                                     const attrMatches =
                                         targetPokemon &&
-                                        guess[attr] === targetPokemon[attr];
+                                        guess[attr] &&
+                                        targetPokemon[attr] &&
+                                        guess[attr].toString().toLowerCase() ===
+                                            targetPokemon[attr]
+                                                .toString()
+                                                .toLowerCase();
                                     const bgColor = attrMatches
                                         ? "bg-green-500"
                                         : "bg-red-500";
@@ -445,11 +463,14 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                 {label}
                                             </span>
                                             <span className="font-medium">
+                                                {" "}
                                                 {attr === "type1" ||
                                                 attr === "type2" ||
                                                 attr === "color" ||
                                                 attr === "habitat"
-                                                    ? capitalize(guess[attr])
+                                                    ? capitalize(
+                                                          guess[attr] || "—"
+                                                      )
                                                     : guess[attr] || "—"}
                                             </span>
                                         </div>
@@ -460,7 +481,6 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                     );
                 })}
             </div>
-
             {/* Footer */}
             <motion.div
                 className={`text-center ${
@@ -474,8 +494,8 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
             >
-                {guesses.length} {guesses.length === 1 ? "guess" : "guesses"} so
-                far
+                {validGuesses.length}{" "}
+                {validGuesses.length === 1 ? "guess" : "guesses"} so far
             </motion.div>
         </div>
     );

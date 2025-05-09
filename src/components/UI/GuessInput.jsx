@@ -1,30 +1,45 @@
 import { useEffect, useState, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getPokemonId } from "../../utils/pokemonUtils";
+import {
+    getPokemonIdFromName,
+    getPokemonImageUrl,
+} from "../../utils/pokemonImageUtils";
 import { capitalize } from "../../utils/stringUtils";
+import PokemonImage from "./PokemonImage";
 
 const GuessInput = memo(
     ({ guess, onChange, onSelect, filteredPokemon, disabled, theme }) => {
         const [pokemonImages, setPokemonImages] = useState({});
+        const [loadingImages, setLoadingImages] = useState(false);
         const isDark = theme === "dark";
 
         useEffect(() => {
-            const fetchPokemonIds = async () => {
+            const fetchPokemonImages = async () => {
+                if (filteredPokemon.length === 0) return;
+
+                setLoadingImages(true);
                 const newImages = {};
-                for (const name of filteredPokemon) {
-                    const id = await getPokemonId(name);
-                    if (id) {
-                        newImages[
-                            name
-                        ] = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-                    }
+
+                try {
+                    // Process in parallel for faster loading
+                    await Promise.all(
+                        filteredPokemon.map(async (name) => {
+                            const id = await getPokemonIdFromName(name);
+                            if (id) {
+                                newImages[name] = getPokemonImageUrl(id);
+                            }
+                        })
+                    );
+
+                    setPokemonImages(newImages);
+                } catch (error) {
+                    console.error("Error fetching Pokemon images:", error);
+                } finally {
+                    setLoadingImages(false);
                 }
-                setPokemonImages(newImages);
             };
 
-            if (filteredPokemon.length > 0) {
-                fetchPokemonIds();
-            }
+            fetchPokemonImages();
         }, [filteredPokemon]);
 
         return (
@@ -140,20 +155,35 @@ const GuessInput = memo(
                                         }
                                     }}
                                 >
-                                    {pokemonImages[name] && (
-                                        <motion.img
-                                            src={
-                                                pokemonImages[name] ||
-                                                "/placeholder.svg"
-                                            }
-                                            alt={`${name} sprite`}
-                                            className="w-12 h-12 sm:w-15 sm:h-15 object-contain"
+                                    {" "}
+                                    {pokemonImages[name] ? (
+                                        <motion.div
                                             initial={{ scale: 0.8, opacity: 0 }}
                                             animate={{ scale: 1, opacity: 1 }}
                                             transition={{
                                                 delay: i * 0.05 + 0.1,
                                             }}
-                                        />
+                                        >
+                                            {" "}
+                                            <PokemonImage
+                                                src={
+                                                    pokemonImages[name] || null
+                                                }
+                                                name={name}
+                                                size="md"
+                                                className="object-contain"
+                                            />
+                                        </motion.div>
+                                    ) : (
+                                        <div className="w-12 h-12 sm:w-15 sm:h-15 flex items-center justify-center">
+                                            {" "}
+                                            <PokemonImage
+                                                src={null}
+                                                name={name}
+                                                size="md"
+                                                className="object-contain"
+                                            />
+                                        </div>
                                     )}
                                     <span className="capitalize font-medium">
                                         {name}

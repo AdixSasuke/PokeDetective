@@ -11,6 +11,7 @@ const UniversalModal = ({
     accentColor,
     buttonColor,
     shouldAnimate = true,
+    guessCount,
 }) => {
     if (!targetPokemon) return null;
     const isDark = theme === "dark";
@@ -120,6 +121,7 @@ const UniversalModal = ({
                                     className="w-full h-full object-contain drop-shadow-lg"
                                 />
                             </motion.div>
+
                             <motion.div
                                 className={`absolute inset-0 rounded-full ${colors.glow} blur-xl -z-0`}
                                 initial={
@@ -132,7 +134,7 @@ const UniversalModal = ({
                             />
                         </div>
                         <motion.p
-                            className={`text-xl sm:text-2xl font-bold ${colors.text} mb-4 sm:mb-5`}
+                            className={`text-xl sm:text-2xl font-bold ${colors.text} mb-2 sm:mb-3`}
                             initial={
                                 shouldAnimate ? { opacity: 0 } : { opacity: 1 }
                             }
@@ -141,6 +143,38 @@ const UniversalModal = ({
                         >
                             {capitalize(targetPokemon.name)}
                         </motion.p>
+                        {guessCount !== undefined && (
+                            <motion.div
+                                className="mb-3 sm:mb-4 text-center"
+                                initial={
+                                    shouldAnimate
+                                        ? { y: 10, opacity: 0 }
+                                        : { y: 0, opacity: 1 }
+                                }
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.7 }}
+                            >
+                                <span
+                                    className={`text-sm ${
+                                        isDark
+                                            ? "text-gray-400"
+                                            : "text-gray-500"
+                                    }`}
+                                >
+                                    {accentColor === "green"
+                                        ? `Caught in ${guessCount} ${
+                                              guessCount === 1
+                                                  ? "guess"
+                                                  : "guesses"
+                                          }!`
+                                        : `After ${guessCount} ${
+                                              guessCount === 1
+                                                  ? "guess"
+                                                  : "guesses"
+                                          }`}
+                                </span>
+                            </motion.div>
+                        )}
                         <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-5 sm:mb-6 text-xs sm:text-sm">
                             <motion.div
                                 className={`${
@@ -259,9 +293,9 @@ const UniversalModal = ({
                                     }
                                 >
                                     {capitalize(targetPokemon.habitat)}
-                                </span>
+                                </span>{" "}
                             </motion.div>
-                        </div>
+                        </div>{" "}
                         <div className="flex gap-3 sm:gap-4">
                             <motion.button
                                 onClick={onClose}

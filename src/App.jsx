@@ -13,6 +13,7 @@ import HintsList from "./components/Hints/HintsList";
 import GuessTable from "./components/Guesses/GuessTable";
 import UniversalModal from "./components/Modals/UniversalModal";
 import ThemeToggle from "./components/UI/ThemeToggle";
+import LoadingIndicator from "./components/UI/LoadingIndicator";
 import usePokeGame from "./hooks/usePokeGame";
 import useDarkMode from "./hooks/useDarkMode";
 import "./animations.css";
@@ -135,6 +136,7 @@ const App = () => {
         showGiveUpModal,
         hasGivenUp,
         showNewBattleButton,
+        isLoading,
         handleGuess,
         handleReset,
         handleHint,
@@ -272,35 +274,51 @@ const App = () => {
                                         Guess the hidden Pokémon!
                                     </p>
                                 </motion.header>
-
                                 <motion.section
                                     className="flex flex-col items-center space-y-4 sm:space-y-5 max-w-md mx-auto px-2 sm:px-0"
                                     variants={itemVariants}
                                     aria-label="Game controls"
                                 >
-                                    <GuessInput
-                                        guess={guess}
-                                        onChange={handleInputChange}
-                                        onSelect={handleSelect}
-                                        filteredPokemon={filteredPokemon}
-                                        disabled={hasGivenUp || win}
-                                        theme={theme}
-                                    />
-
-                                    <div className="w-full grid grid-cols-2 gap-2 sm:gap-4">
-                                        <motion.div whileTap={{ scale: 0.95 }}>
-                                            <GuessButton
-                                                onClick={handleGuess}
+                                    {isLoading ? (
+                                        <LoadingIndicator
+                                            theme={theme}
+                                            message="Catching Pokémon..."
+                                        />
+                                    ) : (
+                                        <>
+                                            <GuessInput
+                                                guess={guess}
+                                                onChange={handleInputChange}
+                                                onSelect={handleSelect}
+                                                filteredPokemon={
+                                                    filteredPokemon
+                                                }
                                                 disabled={hasGivenUp || win}
+                                                theme={theme}
                                             />
-                                        </motion.div>
-                                        <motion.div whileTap={{ scale: 0.95 }}>
-                                            <HintButton
-                                                onClick={handleHint}
-                                                hintsLeft={hintsLeft}
-                                            />
-                                        </motion.div>
-                                    </div>
+
+                                            <div className="w-full grid grid-cols-2 gap-2 sm:gap-4">
+                                                <motion.div
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    <GuessButton
+                                                        onClick={handleGuess}
+                                                        disabled={
+                                                            hasGivenUp || win
+                                                        }
+                                                    />
+                                                </motion.div>
+                                                <motion.div
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    <HintButton
+                                                        onClick={handleHint}
+                                                        hintsLeft={hintsLeft}
+                                                    />
+                                                </motion.div>
+                                            </div>
+                                        </>
+                                    )}
 
                                     <AnimatePresence>
                                         {hints.length > 0 && (
@@ -382,7 +400,6 @@ const App = () => {
                                         </motion.div>
                                     )}
                                 </motion.section>
-
                                 <AnimatePresence mode="popLayout">
                                     {guesses.length > 0 && (
                                         <motion.section
@@ -398,8 +415,7 @@ const App = () => {
                                             />
                                         </motion.section>
                                     )}
-                                </AnimatePresence>
-
+                                </AnimatePresence>{" "}
                                 <AnimatePresence>
                                     {win && (
                                         <UniversalModal
@@ -410,10 +426,10 @@ const App = () => {
                                             titleText="You caught the Pokémon!"
                                             accentColor="green"
                                             buttonColor="green"
+                                            guessCount={guesses.length}
                                         />
                                     )}
                                 </AnimatePresence>
-
                                 <AnimatePresence>
                                     {showGiveUpModal && targetPokemon && (
                                         <UniversalModal
@@ -427,6 +443,7 @@ const App = () => {
                                             titleText="The Pokémon was..."
                                             accentColor="red"
                                             buttonColor="red"
+                                            guessCount={guesses.length}
                                         />
                                     )}
                                 </AnimatePresence>
