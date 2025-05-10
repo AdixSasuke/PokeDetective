@@ -150,18 +150,18 @@ const App = () => {
 
     // Generate dynamic page title based on game state
     const getPageTitle = () => {
-        if (win) return "You Won! | PokéDetective";
-        if (hasGivenUp) return "Try Again | PokéDetective";
-        return "PokéDetective | Pokémon Guessing Game";
+        if (win) return "You Won! | PokeDetective";
+        if (hasGivenUp) return "Try Again | PokeDetective";
+        return "PokeDetective | Pokemon Guessing Game";
     };
 
     // Generate dynamic meta description based on game state
     const getMetaDescription = () => {
         if (win)
-            return "You successfully identified the hidden Pokémon! Play again to test your Pokémon knowledge.";
+            return "You successfully identified the hidden Pokemon! Play again to test your Pokemon knowledge.";
         if (hasGivenUp)
-            return "Don't give up! Try to identify another hidden Pokémon and test your knowledge.";
-        return "PokéDetective - A Pokémon guessing game where you identify hidden Pokémon through their attributes";
+            return "Don't give up! Try to identify another hidden Pokemon and test your knowledge.";
+        return "PokeDetective - A Pokemon guessing game where you identify hidden Pokemon through their attributes";
     };
 
     // Simulate loading time
@@ -482,7 +482,7 @@ const App = () => {
                                             : "text-gray-600"
                                     }`}
                                 >
-                                    Type a Pokémon name and make a guess. Green
+                                    Type a Pokemon name and make a guess. Green
                                     cells show correct attributes, red cells
                                     show incorrect ones. Use hints if you're
                                     stuck. Good luck catching them all!
