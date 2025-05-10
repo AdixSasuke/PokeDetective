@@ -138,6 +138,7 @@ const App = () => {
         hasGivenUp,
         showNewBattleButton,
         isLoading,
+        isGuessing,
         handleGuess,
         handleReset,
         handleHint,
@@ -287,6 +288,7 @@ const App = () => {
                                         />
                                     ) : (
                                         <>
+                                            {" "}
                                             <GuessInput
                                                 guess={guess}
                                                 onChange={handleInputChange}
@@ -294,18 +296,24 @@ const App = () => {
                                                 filteredPokemon={
                                                     filteredPokemon
                                                 }
-                                                disabled={hasGivenUp || win}
+                                                disabled={
+                                                    hasGivenUp ||
+                                                    win ||
+                                                    isGuessing
+                                                }
                                                 theme={theme}
                                             />
-
                                             <div className="w-full grid grid-cols-2 gap-2 sm:gap-4">
                                                 <motion.div
                                                     whileTap={{ scale: 0.95 }}
                                                 >
+                                                    {" "}
                                                     <GuessButton
                                                         onClick={handleGuess}
                                                         disabled={
-                                                            hasGivenUp || win
+                                                            hasGivenUp ||
+                                                            win ||
+                                                            isGuessing
                                                         }
                                                     />
                                                 </motion.div>

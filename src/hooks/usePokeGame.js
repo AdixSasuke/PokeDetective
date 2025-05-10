@@ -27,6 +27,7 @@ const usePokeGame = () => {
     const [hasGivenUp, setHasGivenUp] = useState(false);
     const [showNewBattleButton, setShowNewBattleButton] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isGuessing, setIsGuessing] = useState(false);
 
     // Preload common Pokémon images
     useEffect(() => {
@@ -96,21 +97,26 @@ const usePokeGame = () => {
             }, 300),
         [allPokemon]
     );
-
     const handleGuess = async () => {
-        if (win || !guess.trim() || hasGivenUp) return;
+        // Prevent multiple submissions while guessing or if game is over
+        if (win || !guess.trim() || hasGivenUp || isGuessing) return;
+
+        // Set guessing state to true to prevent multiple submissions
+        setIsGuessing(true);
 
         try {
             const guessed = await fetchPokemonData(guess.trim().toLowerCase());
 
             if (!guessed) {
                 alert("Invalid Pokémon name!");
+                setIsGuessing(false);
                 return;
             } // Ensure guessed has required properties
             if (!guessed || !guessed.name) {
                 console.error("Invalid Pokemon data - missing name:", guessed);
                 alert("Error fetching Pokémon data. Please try again.");
                 setGuess("");
+                setIsGuessing(false);
                 return;
             }
 
@@ -134,9 +140,7 @@ const usePokeGame = () => {
                 targetPokemon.name &&
                 guessed.name &&
                 guessed.name.toLowerCase() === targetPokemon.name.toLowerCase();
-            if (isCorrect) setWin(true);
-
-            // Ensure all required data is present before adding the guess
+            if (isCorrect) setWin(true); // Ensure all required data is present before adding the guess
             if (guessed && guessed.name && guessed.image) {
                 setGuesses((prevGuesses) => [...prevGuesses, guessed]);
             } else {
@@ -148,9 +152,18 @@ const usePokeGame = () => {
             console.error("Error in handleGuess:", error);
             alert("An error occurred. Please try again.");
             setGuess("");
+        } finally {
+            // Make sure isGuessing is reset to false regardless of success or failure
+            setIsGuessing(false);
         }
     };
     const handleReset = useCallback(async () => {
+        // Prevent reset while already guessing
+        if (isGuessing) return;
+
+        // Set loading state
+        setIsLoading(true);
+
         try {
             const id = Math.floor(Math.random() * 1010) + 1;
             const pokemon = await fetchPokemonData(id);
@@ -166,6 +179,7 @@ const usePokeGame = () => {
                 setHintsLeft(3);
                 setHasGivenUp(false);
                 setShowNewBattleButton(false);
+                setIsGuessing(false); // Make sure guessing state is reset
             } else {
                 console.error(
                     "Invalid target Pokemon data during reset:",
@@ -176,8 +190,10 @@ const usePokeGame = () => {
             }
         } catch (error) {
             console.error("Error resetting game:", error);
+        } finally {
+            setIsLoading(false);
         }
-    }, []);
+    }, [isGuessing]);
 
     const handleHint = useCallback(() => {
         if (!targetPokemon || hintsLeft <= 0) return;
@@ -243,20 +259,27 @@ const usePokeGame = () => {
             alert("No more hints available for this Pokémon!");
         }
     }, [targetPokemon, hints, hintsLeft]);
-
     const handleInputChange = useCallback(
         (e) => {
+            // Prevent input changes while already guessing
+            if (isGuessing) return;
+
             const inputValue = e.target.value;
             setGuess(inputValue);
             debouncedFilter(inputValue);
         },
-        [debouncedFilter]
+        [debouncedFilter, isGuessing]
     );
+    const handleSelect = useCallback(
+        (name) => {
+            // Prevent selection while already guessing
+            if (isGuessing) return;
 
-    const handleSelect = useCallback((name) => {
-        setGuess(name);
-        setFilteredPokemon([]);
-    }, []);
+            setGuess(name);
+            setFilteredPokemon([]);
+        },
+        [isGuessing]
+    );
 
     const handleGiveUp = useCallback(() => {
         setShowGiveUpModal(true);
@@ -272,7 +295,6 @@ const usePokeGame = () => {
 
         setShowNewBattleButton(true);
     }, [win]);
-
     return {
         targetPokemon,
         guess,
@@ -285,6 +307,7 @@ const usePokeGame = () => {
         hasGivenUp,
         showNewBattleButton,
         isLoading,
+        isGuessing,
         handleGuess,
         handleReset,
         handleHint,
