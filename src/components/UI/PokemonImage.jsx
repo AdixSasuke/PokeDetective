@@ -23,7 +23,9 @@ const PokemonImage = ({ src, name, size = "md", className = "" }) => {
         setIsLoaded(true);
     };
     return (
-        <div className={`${sizeClass} relative overflow-hidden ${className}`}>
+        <div
+            className={`${sizeClass} relative overflow-hidden rounded-sm ${className}`}
+        >
             {/* Loading animation with pokebola */}
             {(!isLoaded || error || !src) && (
                 <motion.div
@@ -35,7 +37,7 @@ const PokemonImage = ({ src, name, size = "md", className = "" }) => {
                     <motion.img
                         src="/pokebola.png"
                         alt="Loading..."
-                        className="w-3/4 h-3/4" // Made slightly larger for better visibility
+                        className="w-full h-full" // Adjusted to match full size of Pokemon images
                         animate={{
                             rotate: 360,
                             scale: [0.85, 1, 0.85],

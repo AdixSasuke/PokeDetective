@@ -10,7 +10,7 @@ const LoadingIndicator = ({ theme, message = "Catching Pokémon..." }) => {
             transition={{ duration: 0.3 }}
         >
             <motion.div
-                className="w-10 h-10"
+                className="w-12 h-12 flex items-center justify-center"
                 animate={{
                     rotate: 360,
                 }}

@@ -138,7 +138,7 @@ const GuessInput = memo(
                                         isDark
                                             ? "bg-gray-800 text-gray-200"
                                             : ""
-                                    } cursor-pointer text-sm sm:text-base flex items-center gap-2 sm:gap-3 border-b ${
+                                    } cursor-pointer text-sm sm:text-base flex items-center gap-3 border-b ${
                                         isDark
                                             ? "border-gray-700"
                                             : "border-gray-100"
@@ -183,7 +183,13 @@ const GuessInput = memo(
                                             />
                                         </motion.div>
                                     ) : (
-                                        <div className="w-12 h-12 sm:w-15 sm:h-15 flex items-center justify-center">
+                                        <motion.div
+                                            initial={{ scale: 0.8, opacity: 0 }}
+                                            animate={{ scale: 1, opacity: 1 }}
+                                            transition={{
+                                                delay: i * 0.05 + 0.1,
+                                            }}
+                                        >
                                             {" "}
                                             <PokemonImage
                                                 src={null}
@@ -191,7 +197,7 @@ const GuessInput = memo(
                                                 size="md"
                                                 className="object-contain"
                                             />
-                                        </div>
+                                        </motion.div>
                                     )}
                                     <span className="capitalize font-medium">
                                         {name}

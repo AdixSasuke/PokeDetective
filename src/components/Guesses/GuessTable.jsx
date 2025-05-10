@@ -121,7 +121,7 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                 >
                                                     {" "}
                                                     <motion.div
-                                                        className="bg-white rounded-lg w-16 h-16 flex items-center justify-center shadow-md"
+                                                        className="bg-white rounded-lg w-16 h-16 flex items-center justify-center shadow-md p-0"
                                                         initial={
                                                             isNewest
                                                                 ? { scale: 0 }
@@ -137,6 +137,7 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                                 : 0,
                                                         }}
                                                     >
+                                                        {" "}
                                                         <PokemonImage
                                                             src={
                                                                 guess.image ||
@@ -144,7 +145,7 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                                             }
                                                             name={guess.name}
                                                             size="lg"
-                                                            className="pokemon-image"
+                                                            className="pokemon-image w-full h-full"
                                                         />
                                                     </motion.div>
                                                 </div>
@@ -258,8 +259,9 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                 role="heading"
                                 aria-level="3"
                             >
+                                {" "}
                                 <motion.div
-                                    className="bg-white rounded-lg p-1 shadow-md"
+                                    className="bg-white rounded-lg p-0 shadow-md"
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
                                     transition={{
@@ -269,8 +271,9 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                         delay: 0.1,
                                     }}
                                 >
+                                    {" "}
                                     <motion.div
-                                        className="rounded-lg w-12 h-12 flex items-center justify-center"
+                                        className="rounded-lg w-12 h-12 flex items-center justify-center overflow-hidden"
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         transition={{ delay: 0.2 }}
@@ -283,7 +286,7 @@ const GuessTable = ({ guesses, targetPokemon, theme }) => {
                                             }
                                             name={validGuesses[0].name}
                                             size="sm"
-                                            className="w-10 h-10 object-contain"
+                                            className="w-full h-full object-contain"
                                         />
                                     </motion.div>
                                 </motion.div>

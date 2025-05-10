@@ -82,6 +82,7 @@ const LoadingScreen = ({ theme }) => {
             animate="animate"
             exit="exit"
         >
+            {" "}
             <motion.div
                 animate={{
                     rotate: 360,
@@ -91,7 +92,7 @@ const LoadingScreen = ({ theme }) => {
                     rotate: { duration: 1.5, ease: "linear", repeat: Infinity },
                     y: { duration: 0.8, ease: "easeInOut", repeat: Infinity },
                 }}
-                className="w-20 h-20 mb-6"
+                className="w-20 h-20 mb-6 flex items-center justify-center"
             >
                 <img
                     src="/pokebola.png"
@@ -230,8 +231,9 @@ const App = () => {
                                     className="flex flex-col items-center mb-6 sm:mb-8"
                                     variants={itemVariants}
                                 >
+                                    {" "}
                                     <motion.div
-                                        className="w-10 h-10 sm:w-12 sm:h-12 mb-2"
+                                        className="w-12 h-12 mb-2 flex items-center justify-center"
                                         initial={{ scale: 0, rotate: -180 }}
                                         animate={{ scale: 1, rotate: 0 }}
                                         transition={{
@@ -245,11 +247,13 @@ const App = () => {
                                             setRotate((prev) => prev + 360);
                                         }}
                                     >
+                                        {" "}
                                         <motion.img
                                             src="/pokebola.png"
                                             alt="Pokéball"
                                             animate={{ rotate }}
                                             transition={{ duration: 0.6 }}
+                                            className="w-full h-full"
                                         />
                                     </motion.div>
                                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-1 sm:mb-2">
