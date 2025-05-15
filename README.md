@@ -76,9 +76,7 @@ Contributions are welcome! Here's how you can help:
 ## 🙏 Acknowledgments
 
 -   [PokéAPI](https://pokeapi.co/) for providing the Pokémon data
--   [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
--   [Framer Motion](https://www.framer.com/motion/) for the smooth animations
--   Pokémon is © of Nintendo, 1995-2023
+-   Pokémon is © of Nintendo, 1995-2025
 
 ---
 
